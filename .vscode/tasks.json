@@ -1,0 +1,52 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Start Project",
+			"dependsOn": [
+				"Start Server",
+				"Start Client",
+				"Preview"
+			],
+			"dependsOrder": "parallel",
+			"detail": "Start Project",
+			"group": { "kind": "test", "isDefault": true }
+		},
+		{
+			"type": "npm",
+			"script": "dev",
+			"path": "api",
+			"problemMatcher": [],
+			"label": "Start Server",
+			"detail": "nodemon index.js",
+			"group": "test",
+			"icon": { "id": "server", "color": "terminal.ansiGreen" },
+		},
+		{
+            "type": "npm",
+            "script": "start",
+            "path": "app",
+            "problemMatcher": [],
+            "label": "Start Client",
+            "detail": "cross-env GENERATE_SOURCEMAP=false react-scripts start",
+            "group": "test",
+            "icon": { "id": "globe", "color": "terminal.ansiCyan" }
+        },
+		{
+			"type": "process",
+			"problemMatcher": [],
+			"label": "Preview",
+			"detail": "Open Browser",
+			"command": "${input:preview}",
+			"icon": { "id": "browser", "color": "terminal.ansiYellow" }
+		}
+	],
+	"inputs": [
+		{
+			"id": "preview",
+			"type": "command",
+			"command": "simpleBrowser.show",
+			"args": ["http://localhost:3000"]
+		}
+	]
+}
