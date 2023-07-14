@@ -18,6 +18,10 @@ app.use('/api/events', eventsRoutes);
 const errorsRoutes = require('./routes/errorsRoutes');
 app.use('/api/errors', errorsRoutes);
 
+// Midleware pour les routes des utilisateurs
+const usersRoutes = require('./routes/usersRoutes');
+app.use('/api/users', usersRoutes);
+
 // Importer le fichier de configuration de la base de données
 const database = require('./utils/database');
 
