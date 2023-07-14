@@ -40,6 +40,7 @@ import Dashboard from "layouts/dashboard";
 import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
+import Tags from "layouts/tags";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
@@ -69,14 +70,22 @@ const routes = [
     route: "/authentication/sign-in",
     component: <SignIn />,
   },
- /* {
+  /* {
+     type: "collapse",
+     name: "Sign Up",
+     key: "sign-up",
+     icon: <Icon fontSize="small">assignment</Icon>,
+     route: "/authentication/sign-up",
+     component: <SignUp />,
+   },*/
+  {
     type: "collapse",
-    name: "Sign Up",
-    key: "sign-up",
-    icon: <Icon fontSize="small">assignment</Icon>,
-    route: "/authentication/sign-up",
-    component: <SignUp />,
-  },*/
+    name: "Tags",
+    key: "tags",
+    icon: <Icon fontSize="small">tag</Icon>,
+    route: "/tags",
+    component: <Tags />,
+  }
 ];
 
 export default routes;
