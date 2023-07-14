@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const errorsController = require('../controllers/errorsController');
-const authenticate = require('../middleware/authMiddleware');
+const authenticateApp = require('../middleware/authMiddleware');
 const authenticateJWT = require('../middleware/jwtMiddleware');
 
 // Route pour créer une nouvelle erreur
-router.post('/errors', authenticate, errorsController.createError);
+router.post('/errors', authenticateApp, errorsController.createError);
 
 // Route pour récupérer toutes les erreurs
 router.get('/errors', authenticateJWT, errorsController.getAllErrors);

@@ -1,22 +1,27 @@
 const jwtSecret = process.env.JWT_SECRET; // Clé d'API pour l'authentification JWT
+
 const jwt = require('jsonwebtoken');
 
-// Middleware d'authentification JWT
 const authenticateJWT = (req, res, next) => {
-  const token = req.header('Authorization');
+  const { authorization } = req.headers;
 
-  if (!token) {
-    return res.status(401).json({ message: 'Unauthorized' });
+  if (!authorization || !authorization.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'Accès non autorisé' });
   }
 
-  jwt.verify(token, jwtSecret, (err, user) => {
-    if (err) {
-      return res.status(403).json({ message: 'Forbidden' });
-    }
+  const token = authorization.split(' ')[1];
 
-    req.user = user;
+  try {
+    const decoded = jwt.verify(token, jwtSecret);
+
+    // Stocker les informations d'authentification dans la demande
+    req.userId = decoded.userId;
+    req.authType = 'jwt';
+
     next();
-  });
+  } catch (error) {
+    return res.status(401).json({ message: 'Accès non autorisé' });
+  }
 };
 
 module.exports = authenticateJWT;

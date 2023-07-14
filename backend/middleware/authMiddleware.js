@@ -1,14 +1,24 @@
-const apiKey = process.env.SDK_API_KEY; // Clé d'API pour l'authentification
+const User = require('../models/User');
 
-// Middleware d'authentification
-const authenticate = (req, res, next) => {
-  const providedKey = req.headers['x-api-key'];
+const authenticateApp = (req, res, next) => {
+  const { appid, appsecret } = req.headers;
 
-  if (!providedKey || providedKey !== apiKey) {
-    return res.status(401).json({ error: 'Invalid API key' });
+  if (!appid || !appsecret) {
+    return res.status(401).json({ message: 'Accès non autorisé' });
   }
 
-  next();
+  // Vérifier l'APP_ID et l'APP_SECRET
+  User.findOne({ appid, appsecret }, (err, user) => {
+    if (err || !user) {
+      return res.status(401).json({ message: 'Accès non autorisé' });
+    }
+
+    // Stocker les informations d'authentification dans la demande
+    req.userId = user._id;
+    req.authType = 'app';
+
+    next();
+  });
 };
 
-module.exports = authenticate;
+module.exports = authenticateApp;

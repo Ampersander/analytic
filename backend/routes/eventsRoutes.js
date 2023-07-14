@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const eventsController = require('../controllers/eventsController');
-const authenticate = require('../middleware/authMiddleware');
+const authenticateApp = require('../middleware/authMiddleware');
 const authenticateJWT = require('../middleware/jwtMiddleware');
 
 // Route pour créer un nouvel événement
-router.post('/events', authenticate, eventsController.createEvent);
+router.post('/events', authenticateApp, eventsController.createEvent);
 
 // Route pour récupérer tous les événements
 router.get('/events', authenticateJWT, eventsController.getAllEvents);
