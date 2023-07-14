@@ -9,3 +9,25 @@ exports.createTag = async (req, res) => {
         res.status(500).json({ message: 'Une erreur est survenue lors de la création du tag.' });
     }
 };
+
+// Mettre à jour un tag
+exports.updateTag = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { comment } = req.body;
+
+        // Vérifier si le tag existe
+        const tag = await Tag.findById(id);
+        if (!tag) {
+            return res.status(404).json({ message: 'Tag non trouvé.' });
+        }
+
+        // Mettre à jour le champ "comment" du tag
+        tag.comment = comment;
+        await tag.save();
+
+        res.json(tag);
+    } catch (error) {
+        res.status(500).json({ message: 'Une erreur est survenue lors de la mise à jour du tag.' });
+    }
+};

@@ -5,5 +5,6 @@ const tagsController = require('../controllers/tagsController');
 // const authenticateJWT = require('../middleware/jwtMiddleware');
 
 router.post('/', tagsController.createTag);
+router.put('/:id', tagsController.updateTag);
 
 module.exports = router;
