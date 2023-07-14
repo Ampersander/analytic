@@ -1,4 +1,4 @@
-const Event = require('../models/userModel');
+const Event = require('../models/eventModel');
 
 // Méthode pour enregistrer un nouvel événement
 exports.createEvent = async (req, res) => {
