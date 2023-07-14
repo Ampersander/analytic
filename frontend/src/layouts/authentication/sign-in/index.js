@@ -14,8 +14,10 @@ Coded by www.creative-tim.com
 */
 
 // react-router-dom components
-import { Link } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
+
+import { setCookie, getCookie } from "utils";
 // @mui material components
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
@@ -95,9 +97,13 @@ class Basic extends Component {
 
     if (this.checkBtn.context._errors.length === 0) {
       AuthService.login(this.state.email, this.state.password).then(
-        () => {
-          this.props.router.navigate("/profile");
-          window.location.reload();
+        (data) => {
+          console.log(data);
+          localStorage.setItem("user", JSON.stringify(data));
+            if(data.message === "token_create_success")
+              window.location.href = "/dashboard";
+            else
+              window.location.href = "/login";
         },
         error => {
           const resMessage =
@@ -172,7 +178,7 @@ class Basic extends Component {
                   value={this.state.email}
                   onChange={this.onChangeEmail}
                   validations={[required]}
-                  class="MuiInputBase-input MuiOutlinedInput-input"
+                  className="MuiInputBase-input MuiOutlinedInput-input"
                 />
               </div>
 
@@ -180,18 +186,17 @@ class Basic extends Component {
                 <label htmlFor="password">Password</label>
                 <Input
                   type="password"
-                  className="form-control"
                   name="password"
                   value={this.state.password}
                   onChange={this.onChangePassword}
                   validations={[required]}
-                  class="MuiInputBase-input MuiOutlinedInput-input"
+                  className=" form-control MuiInputBase-input MuiOutlinedInput-input"
                 />
               </div>
 
               <div className="form-group">
                 <button
-                  class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-fullWidth MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-fullWidth css-oagsia"
+                  className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-fullWidth MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-fullWidth css-oagsia"
                   disabled={this.state.loading}
 
                 >

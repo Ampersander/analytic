@@ -10,10 +10,6 @@ class AuthService {
         password
       })
       .then(response => {
-        if (response.data.accessToken) {
-          localStorage.setItem("user", JSON.stringify(response.data));
-        }
-
         return response.data;
       });
   }
@@ -31,6 +27,11 @@ class AuthService {
 
   getCurrentUser() {
     return JSON.parse(localStorage.getItem('user'));;
+  }
+
+  useAuth() {
+    const user = this.getCurrentUser();
+    return !!user; // Return true if user exists, false otherwise
   }
 }
 

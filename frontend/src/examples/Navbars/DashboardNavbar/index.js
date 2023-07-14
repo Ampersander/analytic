@@ -1,6 +1,6 @@
 /**
 =========================================================
-* Material Dashboard 2 React - v2.2.0
+* Analytics KPI React - v2.2.0
 =========================================================
 
 * Product Page: https://www.creative-tim.com/product/material-dashboard-react
@@ -28,11 +28,11 @@ import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import Icon from "@mui/material/Icon";
 
-// Material Dashboard 2 React components
+// Analytics KPI React components
 import MDBox from "components/MDBox";
 import MDInput from "components/MDInput";
 
-// Material Dashboard 2 React example components
+// Analytics KPI React example components
 import Breadcrumbs from "examples/Breadcrumbs";
 import NotificationItem from "examples/Items/NotificationItem";
 
@@ -45,7 +45,7 @@ import {
   navbarMobileMenu,
 } from "examples/Navbars/DashboardNavbar/styles";
 
-// Material Dashboard 2 React context
+// Analytics KPI React context
 import {
   useMaterialUIController,
   setTransparentNavbar,

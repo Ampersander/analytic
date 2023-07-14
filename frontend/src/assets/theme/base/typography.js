@@ -1,6 +1,6 @@
 /**
 =========================================================
-* Material Dashboard 2 React - v2.2.0
+* Analytics KPI React - v2.2.0
 =========================================================
 
 * Product Page: https://www.creative-tim.com/product/material-dashboard-react
@@ -14,15 +14,15 @@ Coded by www.creative-tim.com
 */
 
 /**
- * The base typography styles for the Material Dashboard 2 React.
+ * The base typography styles for the Analytics KPI React.
  * You can add new typography style using this file.
- * You can customized the typography styles for the entire Material Dashboard 2 React using thie file.
+ * You can customized the typography styles for the entire Analytics KPI React using thie file.
  */
 
-// Material Dashboard 2 React Base Styles
+// Analytics KPI React Base Styles
 import colors from "assets/theme/base/colors";
 
-// Material Dashboard 2 React Helper Functions
+// Analytics KPI React Helper Functions
 import pxToRem from "assets/theme/functions/pxToRem";
 
 const { dark } = colors;
