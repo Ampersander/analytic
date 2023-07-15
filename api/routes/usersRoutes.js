@@ -3,11 +3,11 @@
 const express = require('express');
 const userController = require('../controllers/userController');
 const authenticateJWT = require('../middleware/jwtMiddleware');
+const authController = require('../controllers/authController');
 
 const router = express.Router();
 
-// TODO Route pour l'inscription
-// router.post('/register', userController.register);
+router.post('/register', authController.register);
 
 // TODO Route pour la confirmation d'email
 // router.get('/confirm/:token', userController.confirmEmail);

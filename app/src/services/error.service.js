@@ -11,7 +11,7 @@ class AnalyticErrorsService {
 
   getErrors() {
     console.log("API_URL: "+API_URL);
-    return axios.get(API_URL+"/errors", { headers: authHeader() });
+    return axios.get(`${API_URL}/errors`, { headers: authHeader() });
   }
 
   createError(errorRequest) {
