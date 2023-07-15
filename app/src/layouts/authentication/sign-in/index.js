@@ -47,6 +47,7 @@ import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
 
 import AuthService from "../../../services/auth.service";
+import { Button } from "@mui/material";
 
 const required = value => {
   if (!value) {
@@ -86,6 +87,7 @@ class Basic extends Component {
   }
 
   handleLogin(e) {
+
     e.preventDefault();
 
     this.setState({
@@ -100,10 +102,7 @@ class Basic extends Component {
         (data) => {
           console.log(data);
           localStorage.setItem("user", JSON.stringify(data));
-            if(data.message === "token_create_success")
-              window.location.href = "/dashboard";
-            else
-              window.location.href = "/login";
+          window.location.href = "/dashboard";
         },
         error => {
           const resMessage =
@@ -173,12 +172,11 @@ class Basic extends Component {
                 <label htmlFor="email">Email</label>
                 <Input
                   type="text"
-                  className="form-control"
+                  className="form-control MuiInputBase-input MuiOutlinedInput-input"
                   name="email"
                   value={this.state.email}
                   onChange={this.onChangeEmail}
                   validations={[required]}
-                  className="MuiInputBase-input MuiOutlinedInput-input"
                 />
               </div>
 
@@ -198,7 +196,7 @@ class Basic extends Component {
                 <button
                   className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-fullWidth MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-fullWidth css-oagsia"
                   disabled={this.state.loading}
-
+                  style={{ display: "none" }}
                 >
                   {this.state.loading && (
                     <span className="spinner-border spinner-border-sm"></span>
@@ -219,9 +217,12 @@ class Basic extends Component {
                 ref={c => {
                   this.checkBtn = c;
                 }}
-              />
+              >
+              </CheckButton>
+              <Button variant="contained" style={{ color: "#fff", marginTop: 20 }} type="submit">Login</Button>
             </Form>
           </MDBox>
+          <button style={{ visibility: "hidden" }}>Login</button>
         </Card>
       </BasicLayout>
 
