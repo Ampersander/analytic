@@ -20,11 +20,11 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
-    appid: {
+    appId: {
         type: String,
         unique: true,
     },
-    appsecret: {
+    appSecret: {
         type: String,
     },
     corsApp: {

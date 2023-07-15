@@ -2,6 +2,7 @@
 
 const express = require('express');
 const userController = require('../controllers/userController');
+const authenticateJWT = require('../middleware/jwtMiddleware');
 
 const router = express.Router();
 
@@ -19,5 +20,8 @@ const router = express.Router();
 
 // TODO Route pour la réinitialisation de mot de passe
 // router.post('/reset-password/:token', userController.resetPassword);
+
+// route pour la validation d'un utilisateur par un administrateur
+//router.put('/users/:userId/validate', authenticateJWT, userController.validateUserApp);
 
 module.exports = router;

@@ -5,6 +5,10 @@ const visitorSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    appId: {
+        type: String,
+        required: true
+    },
     ipAddress: {
         type: String,
         required: true

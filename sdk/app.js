@@ -2,6 +2,10 @@ const { v4: uuidv4 } = require('uuid');
 const requestIp = require('request-ip');
 const useragent = require('useragent');
 
+const APP_ID = process.env.APP_ID;
+const APP_SECRET = process.env.APP_SECRET;
+const API_ENDPOINT = process.env.API_ENDPOINT;
+
 // Création de la Factory pour le SDK frontend
 class WebAnalyticsSDKFactory {
     createSDK() {
@@ -14,9 +18,15 @@ class WebAnalyticsSDK {
     constructor(config) {
         // Configuration par défaut
         this.defaultConfig = {
-            apiEndpoint: "https://api.webanalytics.com",
+            apiEndpoint: config.apiEndpoint || "http://localhost:3000",
+            apiId: config.apiId || "",
+            apiSecret: config.apiSecret || ""
             // Autres options de configuration par défaut
         };
+
+        if (!this.defaultConfig.apiId || !this.defaultConfig.apiSecret) {
+            throw new Error('Veuillez fournir un apiId et un apiSecret.');
+        }
 
         // Fusionner la configuration par défaut avec celle fournie
         this.config = Object.assign({}, this.defaultConfig, config);
@@ -54,6 +64,7 @@ class WebAnalyticsSDK {
 
         //send data to backend
         this.sendDataInfoVisitor({
+            appId : this.config.apiId,
             visitorId,
             ipAddress,
             userAgent,
@@ -96,6 +107,7 @@ class WebAnalyticsSDK {
     getUserAgent() {
         return useragent.parse(navigator.userAgent).toString();
     }
+
 
     // Méthode pour collecter des informations sur le navigateur de l'utilisateur
     collectBrowserInfo() {
@@ -210,6 +222,7 @@ class WebAnalyticsSDK {
 
         // Préparation des données à envoyer
         const eventPayload = {
+            appId : this.config.apiId,
             eventType,
             actionId,
             visitorId,
@@ -254,26 +267,13 @@ class WebAnalyticsSDK {
         this.trackEvent("page_load", actionId, visitorId, eventData);
     }
 
-    // Méthode pour envoyer les données à l'API RESTful
-    async sendDataEvent(eventPayload) {
-        return fetch(`${this.config.apiEndpoint}/api/events`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(eventPayload),
-        })
-            .then(response => response.json())
-            .catch(error => {
-                throw new Error('Erreur lors de l\'envoi des données : ' + error.message);
-            });
-    }
-
     // Méthode pour collecter des informations sur les erreurs JavaScript
     collectJavaScriptErrors() {
         window.onerror = (message, source, lineno, colno, error) => {
             // Collecte des informations sur l'erreur JavaScript
             const errorData = {
+                appId : this.config.apiId,
+                visitorId: getVisitorId(),
                 message,
                 source,
                 lineno,
@@ -295,13 +295,34 @@ class WebAnalyticsSDK {
         };
     }
 
+    //create a function to add in header appId and appSecret
+    addHeader() {
+        const headers = new Headers();
+        headers.append('appId', this.config.apiId);
+        headers.append('appSecret', this.config.apiSecret);
+        headers.append('Content-Type', 'application/json');
+        return headers;
+    }
+
+
+    // Méthode pour envoyer les données à l'API RESTful
+    async sendDataEvent(eventPayload) {
+        return fetch(`${this.config.apiEndpoint}/api/events`, {
+            method: 'POST',
+            headers: this.addHeader(),
+            body: JSON.stringify(eventPayload),
+        })
+            .then(response => response.json())
+            .catch(error => {
+                throw new Error('Erreur lors de l\'envoi des données : ' + error.message);
+            });
+    }
+
     // Méthode pour envoyer les données d'erreur à l'API RESTful ou à toute autre destination souhaitée
     async sendErrorData(errorData) {
         return fetch(`${this.config.apiEndpoint}/api/errors`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: this.addHeader(),
             body: JSON.stringify(errorData),
         })
             .then(response => response.json())
@@ -313,9 +334,7 @@ class WebAnalyticsSDK {
     async sendDataInfoVisitor(data) {
         return fetch(`${this.config.apiEndpoint}/api/visitors`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: this.addHeader(),
             body: JSON.stringify(data),
         })
             .then(response => response.json())
@@ -327,7 +346,9 @@ class WebAnalyticsSDK {
 
 // Exemple d'utilisation du SDK avec une configuration personnalisée
 const sdkConfig = {
-    apiEndpoint: "https://api.mywebanalytics.com",
+    apiEndpoint: API_ENDPOINT,
+    apiId: APP_ID,
+    apiSecret: APP_SECRET,
     // Autres options de configuration personnalisées
 };
 
@@ -341,3 +362,5 @@ const actionId = "button-1";
 const visitorId = "123456789";
 
 sdk.trackEvent(eventType, actionId, visitorId);
+
+

@@ -25,11 +25,11 @@ exports.validateUserApp = async (req, res) => {
 
     // Générer l'appsecret et appid si l'administrateur est connecté
     if (req.user.isAdmin) {
-      user.appsecret = uuidv4();
-      user.appid = uuidv4();
+      user.appSecret = uuidv4();
+      user.appId = uuidv4();
 
       // Envoyer un e-mail de confirmation et d'informations à l'utilisateur
-      mailController.sendConfirmationAndAppInfoEmail(user.email, user.appid, user.appsecret);
+      mailController.sendConfirmationAndAppInfoEmail(user.email, user.appId, user.appSecret);
     }
 
     // Enregistrer les modifications de l'utilisateur dans la base de données
@@ -41,3 +41,14 @@ exports.validateUserApp = async (req, res) => {
     res.status(500).json({ message: 'Erreur lors de la validation de l\'utilisateur' });
   }
 };
+
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des utilisateurs :", error);
+    res.status(500).json({ error: 'Une erreur s\'est produite lors de la récupération des utilisateurs.' });
+  }
+}

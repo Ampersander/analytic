@@ -22,6 +22,10 @@ const eventSchema = new mongoose.Schema({
         // Exemple : { key1: 'value1', key2: 'value2' }
         type: Object
     },
+    appId: {
+        type: String,
+        required: true
+    },
     createdAt: {
         type: Date,
         default: Date.now

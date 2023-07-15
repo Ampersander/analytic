@@ -1,14 +1,14 @@
 const User = require('../models/userModel');
 
 const authenticateApp = (req, res, next) => {
-  const { appid, appsecret } = req.headers;
+  const { appId, appSecret } = req.headers;
 
-  if (!appid || !appsecret) {
+  if (!appId || !appSecret) {
     return res.status(401).json({ message: 'Accès non autorisé' });
   }
 
   // Vérifier l'APP_ID et l'APP_SECRET
-  User.findOne({ appid, appsecret }, (err, user) => {
+  User.findOne({ appId, appSecret }, (err, user) => {
     if (err || !user) {
       return res.status(401).json({ message: 'Accès non autorisé' });
     }

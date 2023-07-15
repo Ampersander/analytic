@@ -19,5 +19,8 @@ router.put('/errors/:errorId', authenticateJWT, errorsController.updateError);
 // Route pour supprimer une erreur
 router.delete('/errors/:errorId', authenticateJWT, errorsController.deleteError);
 
+//Route pour récupérer toutes les erreurs d'une application
+router.get('/errors/app/:appId', authenticateJWT, errorsController.getAllErrorsByAppId);
+
 // Export des routes
 module.exports = router;
