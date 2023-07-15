@@ -1,7 +1,7 @@
 // userController.js
 
 const jwt = require('jsonwebtoken');
-const User = require('../db');
+const User = require('../models/userModel');
 const mailController = require('./mailController');
 const JWT_SECRET = process.env.JWT_SECRET;
 //const User = require('../models/userModel');
@@ -138,7 +138,7 @@ const sendConfirmationEmail = async (email, token) => {
     from: 'webanalytics@platform.com',
     to: email,
     subject: 'Confirmation d\'inscription',
-    text: `Cliquez sur le lien suivant pour confirmer votre inscription : http://localhost:3000/confirm/${token}`,
+    text: `Bienvenue chez webAnalytics ! Votre compte est en attente de validation par un admin, pour pouvoir utiliser le SDK`,
   };
 
   await mailer.sendEmail(mailOptions)
