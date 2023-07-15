@@ -8,7 +8,11 @@ const { v4: uuidv4 } = require('uuid');
 exports.validateUserApp = async (req, res) => {
   const { userId } = req.params;
 
+
   try {
+    if (!req.user.isAdmin) {
+      return res.status(403).json({ message: 'Accès interdit' });
+    }
     // Rechercher l'utilisateur dans la base de données
     const user = await User.findById(userId);
     if (!user) {
@@ -45,6 +49,9 @@ exports.validateUserApp = async (req, res) => {
 
 exports.getAllUsers = async (req, res) => {
   try {
+    if (!req.user.isAdmin) {
+      return res.status(403).json({ message: 'Accès interdit' });
+    }
     const users = await User.find();
     res.json(users);
   } catch (error) {
