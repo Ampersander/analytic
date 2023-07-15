@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Button,
@@ -19,6 +19,7 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import DashboardLayout from 'examples/LayoutContainers/DashboardLayout';
 import DashboardNavbar from 'examples/Navbars/DashboardNavbar';
+import tagService from 'services/tag.service';
 
 const Tags = () => {
     const [tags, setTags] = useState([]);
@@ -35,11 +36,13 @@ const Tags = () => {
         setNewComment(event.target.value);
     };
 
-    const handleAddTag = () => {
+    const handleAddTag = async () => {
         const tag = {
-            id: Date.now(),
             comment: newComment,
         };
+
+        const createdTag = await tagService.create(tag);
+        console.log(createdTag);
 
         setTags([...tags, tag]);
         setNewTag('');
@@ -52,11 +55,9 @@ const Tags = () => {
         setOpenEditDialog(true);
     };
 
-    const handleSaveEditTag = () => {
-        const updatedTags = tags.map((tag) =>
-            tag.id === editTag.id ? { ...tag, comment: newComment } : tag
-        );
-        setTags(updatedTags);
+    const handleSaveEditTag = async () => {
+        await tagService.update({ ...editTag, comment: newComment });
+        await fetchTags();
         handleCloseEditDialog();
     };
 
@@ -79,6 +80,14 @@ const Tags = () => {
         marginBottom: 24,
     }
 
+    const fetchTags = async () => {
+        const tags = await tagService.getAll();
+        setTags(tags);
+    };
+
+    useEffect(() => {
+        fetchTags();
+    }, []);
 
     return (
         <DashboardLayout>
@@ -108,6 +117,7 @@ const Tags = () => {
                                         onClick={handleAddTag}
                                         disabled={!newComment}
                                         fullWidth
+                                        style={{ color: '#fff' }}
                                     >
                                         Add Tag
                                     </Button>
@@ -119,7 +129,7 @@ const Tags = () => {
                     <Box mt={4} display="flex" justifyContent="center" flexWrap="wrap">
                         {tags.map((tag) => (
                             <Chip
-                                key={tag.id}
+                                key={tag._id}
                                 label={tag.comment}
                                 onDelete={() => handleDeleteTag(tag.id)}
                                 onClick={() => handleEditTag(tag)}

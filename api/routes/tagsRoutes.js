@@ -4,6 +4,7 @@ const tagsController = require('../controllers/tagsController');
 // const authenticate = require('../middleware/authMiddleware');
 // const authenticateJWT = require('../middleware/jwtMiddleware');
 
+router.get('/', tagsController.getAllTags);
 router.post('/', tagsController.createTag);
 router.put('/:id', tagsController.updateTag);
 

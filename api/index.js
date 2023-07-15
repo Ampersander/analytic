@@ -1,7 +1,11 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+var cors = require('cors')
 require('dotenv').config();
+
+// Middleware pour autoriser les requêtes cross-origin
+app.use(cors())
 
 // Middleware pour parser le corps des requêtes au format JSON
 app.use(bodyParser.json());

@@ -31,3 +31,13 @@ exports.updateTag = async (req, res) => {
         res.status(500).json({ message: 'Une erreur est survenue lors de la mise à jour du tag.' });
     }
 };
+
+// Get all tags
+exports.getAllTags = async (req, res) => {
+    try {
+        const tags = await Tag.find();
+        res.json(tags);
+    } catch (error) {
+        res.status(500).json({ message: 'Une erreur est survenue lors de la récupération des tags.' });
+    }
+}
