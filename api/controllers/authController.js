@@ -10,7 +10,7 @@ const mailer = require('../utils/mailer');
 
 // Méthode pour s'inscrire
 exports.register = async (req, res) => {
-  const { name, email, password, corsApp } = req.body;
+  const { name, email, password, address, companyName, corsApp } = req.body;
   const appId = uuid.v4();
 
   try {
@@ -21,7 +21,7 @@ exports.register = async (req, res) => {
     }
 
     // Créer un nouvel utilisateur
-    const user = new User({ name, email, password, confirmed: false, corsApp, appId });
+    const user = new User({ name, email, password, address, companyName, confirmed: false, corsApp, appId });
 
     await user.save();
 
