@@ -4,10 +4,14 @@ const jwt = require('jsonwebtoken');
 const User = require('../db');
 const mailController = require('./mailController');
 const JWT_SECRET = process.env.JWT_SECRET;
+//const User = require('../models/userModel');
+const uuid = require('uuid');
+const mailer = require('../utils/mailer');
 
 // Méthode pour s'inscrire
 exports.register = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, corsApp } = req.body;
+  const appId = uuid.v4();
 
   try {
     // Vérifier si l'utilisateur existe déjà
@@ -17,14 +21,15 @@ exports.register = async (req, res) => {
     }
 
     // Créer un nouvel utilisateur
-    const user = new User({ name, email, password, confirmed: false });
+    const user = new User({ name, email, password, confirmed: false, corsApp, appId });
+
     await user.save();
 
     // Générer un token JWT
     const token = jwt.sign({ userId: user._id }, JWT_SECRET);
 
     // Envoyer un e-mail de confirmation
-    mailController.sendConfirmationEmail(email, token);
+    await sendConfirmationEmail(email, token);
 
     res.status(200).json({ message: 'Inscription réussie. Vérifiez votre boîte de réception pour la confirmation.' });
   } catch (error) {
@@ -126,4 +131,15 @@ exports.resetPassword = async (req, res) => {
     console.log('Erreur lors de la réinitialisation du mot de passe :', error);
     res.status(400).json({ message: 'Token invalide ou expiré' });
   }
+};
+
+const sendConfirmationEmail = async (email, token) => {
+  const mailOptions = {
+    from: 'webanalytics@platform.com',
+    to: email,
+    subject: 'Confirmation d\'inscription',
+    text: `Cliquez sur le lien suivant pour confirmer votre inscription : http://localhost:3000/confirm/${token}`,
+  };
+
+  await mailer.sendEmail(mailOptions)
 };

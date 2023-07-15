@@ -1,8 +1,7 @@
 const mailer = require('../utils/mailer');
 
 // Méthode pour envoyer un e-mail de confirmation
-exports.sendConfirmationEmail = (req, res) => {
-  const { email, token } = req.body;
+exports.sendConfirmationEmail = (req, res, email, token) => {
 
   const mailOptions = {
     from: 'your-email@example.com',
