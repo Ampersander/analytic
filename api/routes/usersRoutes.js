@@ -24,4 +24,11 @@ router.post('/login', authController.login);
 // route pour la validation d'un webmaster par un administrateur
 router.put('/:userId/validate', authenticateJWT, userController.validateWebmaster);
 
+// route pour récupérer les infos du user connecté
+router.get('/me', authenticateJWT, userController.getConnectedUser);
+
+// route modifier les infos du user connecté
+router.put('/me', authenticateJWT, userController.updateUserProfile);
+
+
 module.exports = router;
