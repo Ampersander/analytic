@@ -18,7 +18,7 @@ class WebAnalyticsSDK {
     constructor(config) {
         // Configuration par défaut
         this.defaultConfig = {
-            apiEndpoint: config.apiEndpoint || "http://localhost:3000",
+            apiEndpoint: config.apiEndpoint || "http://localhost:8000", // TODO add in .env
             apiId: config.apiId || "",
             apiSecret: config.apiSecret || ""
             // Autres options de configuration par défaut
@@ -362,5 +362,3 @@ const actionId = "button-1";
 const visitorId = "123456789";
 
 sdk.trackEvent(eventType, actionId, visitorId);
-
-
