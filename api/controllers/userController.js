@@ -46,10 +46,10 @@ exports.validateWebmaster = async (req, res) => {
 
 exports.getAllUsers = async (req, res) => {
   try {
-    if (!req.user.isAdmin) {
+    if (!req.userIsAdmin) {
       return res.status(403).json({ message: 'Accès interdit' });
     }
-    const users = await User.find();
+    const users = await User.find({}, 'email companyName');
     res.json(users);
   } catch (error) {
     console.error("Erreur lors de la récupération des utilisateurs :", error);

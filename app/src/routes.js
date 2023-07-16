@@ -36,48 +36,53 @@ Coded by www.creative-tim.com
 */
 
 // Analytics KPI React layouts
-import Dashboard from 'layouts/dashboard';
-import Profile from 'layouts/profile';
-import SignIn from 'layouts/authentication/sign-in';
-import SignUp from 'layouts/authentication/sign-up';
-import Tags from 'layouts/tags';
-import Tunnels from 'layouts/tunnels';
+import Dashboard from "layouts/dashboard";
+import Profile from "layouts/profile";
+import SignIn from "layouts/authentication/sign-in";
+import SignUp from "layouts/authentication/sign-up";
+import Tags from "layouts/tags";
+import Users from "layouts/users";
+import Tunnels from "layouts/tunnels";
 
 // @mui icons
-import Icon from '@mui/material/Icon';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import Icon from "@mui/material/Icon";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
 const routes = [
   {
-    type: 'collapse',
-    name: 'Dashboard',
-    key: 'dashboard',
+    type: "collapse",
+    name: "Dashboard",
+    key: "dashboard",
     icon: <Icon fontSize="small">dashboard</Icon>,
-    route: '/dashboard',
+    route: "/dashboard",
     component: <Dashboard />,
   },
   {
-    type: 'collapse',
-    name: 'Profil',
-    key: 'profile',
+    type: "collapse",
+    name: "Profil",
+    key: "profile",
     icon: <Icon fontSize="small">person</Icon>,
-    route: '/profile',
+    route: "/profile",
     component: <Profile />,
   },
   {
-    type: 'collapse',
-    name: 'Connexion',
-    key: 'sign-in',
+    type: "collapse",
+    name: "Connexion",
+    key: "sign-in",
     icon: <Icon fontSize="small">login</Icon>,
-    route: '/authentication/sign-in',
+    route: "/authentication/sign-in",
     component: <SignIn />,
   },
   {
-    type: 'collapse',
-    name: 'Inscription',
-    key: 'sign-up',
-    icon: <Icon fontSize="small"><PersonAddIcon /></Icon>,
-    route: '/authentication/sign-up',
+    type: "collapse",
+    name: "Inscription",
+    key: "sign-up",
+    icon: (
+      <Icon fontSize="small">
+        <PersonAddIcon />
+      </Icon>
+    ),
+    route: "/authentication/sign-up",
     component: <SignUp />,
   },
   /* {
@@ -89,30 +94,43 @@ const routes = [
      component: <SignUp />,
    },*/
   {
-    type: 'divider',
-    key: 'divider'
+    type: "divider",
+    key: "divider",
   },
   {
-    type: 'title',
-    title: 'Gérer mes données',
-    key: 'title'
+    type: "title",
+    title: "Gérer mes données",
+    key: "title",
   },
   {
-    type: 'collapse',
-    name: 'Tags',
-    key: 'tags',
+    type: "collapse",
+    name: "Tags",
+    key: "tags",
     icon: <Icon fontSize="small">tag</Icon>,
-    route: '/tags',
+    route: "/tags",
     component: <Tags />,
   },
   {
-    type: 'collapse',
-    name: 'Tunnels de conversion',
-    key: 'tunnels',
+    type: "collapse",
+    name: "Tunnels de conversion",
+    key: "tunnels",
     icon: <Icon fontSize="small">route</Icon>,
-    route: '/tunnels',
+    route: "/tunnels",
     component: <Tunnels />,
-  }
+  },
+  {
+    type: "title",
+    title: "Administration",
+    key: "title",
+  },
+  {
+    type: "collapse",
+    name: "Users",
+    key: "users",
+    icon: <Icon fontSize="small">person</Icon>,
+    route: "/users",
+    component: <Users />,
+  },
 ];
 
 export default routes;
