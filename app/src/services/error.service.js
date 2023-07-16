@@ -4,7 +4,7 @@ import authHeader from './auth-header';
 const API_URL = "http://localhost:8000"
 
 
-class AnalyticErrorsService {
+class ErrorService {
   getErrorsByVisitorId(visitorIDRequest) {
     return axios.get(`${API_URL}/errors/visitor` + visitorIDRequest, { headers: authHeader() });
   }
@@ -27,4 +27,5 @@ class AnalyticErrorsService {
   }
 }
 
-export default new AnalyticErrorsService();
+const service = new ErrorService()
+export default service

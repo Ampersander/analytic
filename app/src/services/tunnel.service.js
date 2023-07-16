@@ -55,4 +55,5 @@ class TunnelService {
 	}
 }
 
-export default new TunnelService()
+const service = new TunnelService()
+export default service

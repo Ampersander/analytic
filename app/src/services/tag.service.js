@@ -31,4 +31,5 @@ class TagService {
   }
 }
 
-export default new TagService();
+const service = new TagService()
+export default service
