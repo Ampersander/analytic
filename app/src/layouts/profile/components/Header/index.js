@@ -38,7 +38,11 @@ import breakpoints from "assets/theme/base/breakpoints";
 import burceMars from "assets/images/bruce-mars.jpg";
 import backgroundImage from "assets/images/bg-profile.jpeg";
 
-function Header({ children }) {
+import Avatar from '@mui/material/Avatar';
+import PersonIcon from '@mui/icons-material/Person';
+import { blue } from '@mui/material/colors';
+
+function Header({ children, currentUser }) {
   const [tabsOrientation, setTabsOrientation] = useState("horizontal");
   const [tabValue, setTabValue] = useState(0);
 
@@ -94,19 +98,23 @@ function Header({ children }) {
       >
         <Grid container spacing={3} alignItems="center">
           <Grid item>
-            <MDAvatar src={burceMars} alt="profile-image" size="xl" shadow="sm" />
+            <Avatar sx={{ bgcolor: blue[500] }}>
+              <PersonIcon />
+            </Avatar>
           </Grid>
           <Grid item>
             <MDBox height="100%" mt={0.5} lineHeight={1}>
               <MDTypography variant="h5" fontWeight="medium">
-                Richard Davis
+                {currentUser !== null ? currentUser.name : "Loading..."}
               </MDTypography>
-              <MDTypography variant="button" color="text" fontWeight="regular">
-                CEO / Co-Founder
-              </MDTypography>
+              {currentUser !== null ? (
+                <MDTypography variant="button" color="text" fontWeight="regular">
+                  Role : {currentUser.isAdmin ? "Admin" : "Webmaster"}
+                </MDTypography>
+              ) : null}
             </MDBox>
           </Grid>
-          <Grid item xs={12} md={6} lg={4} sx={{ ml: "auto" }}>
+          {/* <Grid item xs={12} md={6} lg={4} sx={{ ml: "auto" }}>
             <AppBar position="static">
               <Tabs orientation={tabsOrientation} value={tabValue} onChange={handleSetTabValue}>
                 <Tab
@@ -135,7 +143,7 @@ function Header({ children }) {
                 />
               </Tabs>
             </AppBar>
-          </Grid>
+          </Grid> */}
         </Grid>
         {children}
       </Card>

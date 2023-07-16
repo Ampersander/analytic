@@ -30,6 +30,18 @@ class AuthService {
     const user = this.getCurrentUser();
     return !!user; // Return true if user exists, false otherwise
   }
+
+  async getProfile() {
+    const token = this.getCurrentUser().token;
+    const response = await axios.get(API_URL + "/users/me", { headers: { Authorization: `Bearer ${token}` } });
+    return response.data;
+  }
+
+  async updateProfile(updatedUser) {
+    const token = this.getCurrentUser().token;
+    const response = await axios.put(API_URL + "/users/me", updatedUser, { headers: { Authorization: `Bearer ${token}` } });
+    return response;
+  }
 }
 
 const service = new AuthService()
