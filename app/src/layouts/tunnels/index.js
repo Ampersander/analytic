@@ -20,8 +20,8 @@ import {
 } from '@mui/material'
 import { Close } from '@mui/icons-material'
 
-import tagService from 'services/tag.service'
-import tunnelService from 'services/tunnel.service'
+import TagService from 'services/tag.service'
+import TunnelService from 'services/tunnel.service'
 import DashboardNavbar from 'examples/Navbars/DashboardNavbar'
 import DashboardLayout from 'examples/LayoutContainers/DashboardLayout'
 
@@ -37,7 +37,7 @@ export default function Tunnels() {
 	const handleEditChange = (name, value) => setEditInputs(values => ({ ...values, [name]: value }))
 
 	const handleAdd = async () => {
-		const created = await tunnelService.create(inputs)
+		const created = await TunnelService.create(inputs)
 
 		// TODO show success toast
 		setItems([...items, created])
@@ -50,7 +50,7 @@ export default function Tunnels() {
 	}
 
 	const handleSaveEdit = async () => {
-		await tunnelService.update(editInputs._id, editInputs)
+		await TunnelService.update(editInputs._id, editInputs)
 		// TODO show success toast
 
 		await fetchTags()
@@ -64,19 +64,19 @@ export default function Tunnels() {
 	}
 
 	const handleDelete = async item => {
-		await tunnelService.delete(item._id)
+		await TunnelService.delete(item._id)
 		// TODO show success toast
 
 		setItems(items.filter(_ => _._id !== item._id))
 	}
 
 	const fetchTags = async () => {
-		const data = await tagService.getAll()
+		const data = await TagService.getAll()
 		setTags(data)
 	}
 
 	const fetchItems = async () => {
-		const data = await tunnelService.getAll()
+		const data = await TunnelService.getAll()
 		setItems(data)
 	}
 
