@@ -42,8 +42,13 @@ function Overview() {
     appId: "",
     appSecret: "",
   });
+  const isConnected = AuthService.getCurrentUser();
 
   useEffect(() => {
+    if (!isConnected) {
+      return;
+    }
+
     AuthService.getProfile().then((user) => {
       setCurrentUser(user);
       setUpdatedUser({
@@ -92,6 +97,8 @@ function Overview() {
       <MDBox mb={2} />
       <Header currentUser={currentUser}>
         <Typography variant="h2" fontWeight="bold" textAlign="center">Mon Profil</Typography>
+        <Typography variant="h5" fontWeight="bold" textAlign="center" style={{ marginTop: 50 }}>Connectez vous pour gérer votre profil !</Typography>
+
         <Box mt={5} mb={3} display="flex" justifyContent="center">
           {currentUser && !editMode && (
             <Box display="flex" flexDirection="column" alignItems="flex-start">
