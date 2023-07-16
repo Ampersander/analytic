@@ -22,6 +22,6 @@ router.post('/login', authController.login);
 // router.post('/reset-password/:token', userController.resetPassword);
 
 // route pour la validation d'un webmaster par un administrateur
-router.put('/:userId/validate', userController.validateWebmaster);
+router.put('/:userId/validate', authenticateJWT, userController.validateWebmaster);
 
 module.exports = router;

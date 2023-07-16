@@ -9,7 +9,7 @@ exports.validateWebmaster = async (req, res) => {
   const { userId } = req.params;
 
   try {
-    if (!req.user.isAdmin) {
+    if (!req.userIsAdmin) {
       return res.status(403).json({ message: 'Accès interdit' });
     }
     // Rechercher l'utilisateur dans la base de données

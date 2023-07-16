@@ -120,22 +120,19 @@ database.connectDB().then(() => {
 		.then(existingData => {
 			if (existingData) {
 				console.log('L\'admin existent déjà, insertion ignorée');
-				process.exit(0);
+				return;
 			}
 
 			return User.insertMany(admin);
 		})
 		.then(() => {
 			console.log('Admin insérées avec succès');
-			process.exit(0);
 		})
 		.catch(error => {
 			console.error('Erreur lors de la recherche ou de l\'insertion des données :', error);
-			process.exit(1);
 		});
 }).catch((error) => {
 	console.error('Erreur lors de la connexion à la base de données :', error);
-	process.exit(1);
 });
 
 module.exports = app
