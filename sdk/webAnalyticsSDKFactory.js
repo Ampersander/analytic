@@ -1,7 +1,5 @@
-// const { v4: uuidv4 } = require("uuid");
-// const requestIp = require("request-ip");
-// const useragent = require("useragent");
 import { v4 as uuidv4 } from "uuid";
+import ua from "ua-parser-js";
 // import { requestIp } from "request-ip";
 // import { useragent } from "useragent";
 
@@ -25,7 +23,7 @@ class WebAnalyticsSDK {
             // Autres options de configuration par défaut
         };
 
-        if (!this.defaultConfig.apiId || !this.defaultConfig.apiSecret) {
+        if (!this.defaultConfig.apiId) {
             throw new Error("Veuillez fournir un APP_ID et un apiSecret.");
         }
 
@@ -105,8 +103,7 @@ class WebAnalyticsSDK {
 
     // Retrieve the User-Agent
     getUserAgent() {
-        // return useragent.parse(navigator.userAgent).toString();
-        return "userAgent";
+        return ua(navigator.userAgent);
     }
 
     // Méthode pour collecter des informations sur le navigateur de l'utilisateur
@@ -341,21 +338,6 @@ class WebAnalyticsSDK {
         headers.append("appSecret", this.config.apiSecret);
         headers.append("Content-Type", "application/json");
         return headers;
-    }
-
-    // Méthode pour envoyer les données à l'API RESTful
-    async sendDataEvent(eventPayload) {
-        return fetch(`${this.config.apiEndpoint}/api/events`, {
-            method: "POST",
-            headers: this.addHeader(),
-            body: JSON.stringify(eventPayload),
-        })
-            .then((response) => response.json())
-            .catch((error) => {
-                throw new Error(
-                    "Erreur lors de l'envoi des données : " + error.message
-                );
-            });
     }
 
     // Méthode pour envoyer les données d'erreur à l'API RESTful ou à toute autre destination souhaitée

@@ -1,3 +1,4 @@
 import trackerFront from "./trackerFront";
+import trackerBack from "./trackerBack";
 
-export default trackerFront;
+export { trackerFront, trackerBack };
