@@ -16,6 +16,7 @@ const authenticateJWT = (req, res, next) => {
 
     // Stocker les informations d'authentification dans la demande
     req.userId = decoded.userId;
+    req.userIsAdmin = decoded.isAdmin;
     req.authType = 'jwt';
 
     next();

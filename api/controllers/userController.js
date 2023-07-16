@@ -5,12 +5,11 @@ const mailController = require('./mailController');
 const { v4: uuidv4 } = require('uuid');
 
 // Méthode pour valider un utilisateur par un administrateur
-exports.validateUserApp = async (req, res) => {
+exports.validateWebmaster = async (req, res) => {
   const { userId } = req.params;
 
-
   try {
-    if (!req.user.isAdmin) {
+    if (!req.userIsAdmin) {
       return res.status(403).json({ message: 'Accès interdit' });
     }
     // Rechercher l'utilisateur dans la base de données
@@ -19,22 +18,20 @@ exports.validateUserApp = async (req, res) => {
       return res.status(404).json({ message: 'Utilisateur non trouvé' });
     }
 
-    // Vérifier si l'app de l'utilisateur est déjà confirmé
-    if (user.appConfirmed) {
+    // Vérifier si l'utilisateur est déjà confirmé
+    if (user.confirmed) {
       return res.status(409).json({ message: 'L\'utilisateur est déjà confirmé' });
     }
 
     // Valider l'utilisateur
-    user.appConfirmed = true;
+    user.confirmed = true;
 
-    // Générer l'appsecret et appid si l'administrateur est connecté
-    if (req.user.isAdmin) {
-      user.appSecret = uuidv4();
-      user.appId = uuidv4();
+    // Générer l'appsecret et appid pour le webmaster
+    user.appSecret = uuidv4();
+    user.appId = uuidv4();
 
-      // Envoyer un e-mail de confirmation et d'informations à l'utilisateur
-      mailController.sendConfirmationAndAppInfoEmail(user.email, user.appId, user.appSecret);
-    }
+    // Envoyer un e-mail de confirmation et d'informations à l'utilisateur
+    // mailController.sendConfirmationAndAppInfoEmail(user.email, user.appId, user.appSecret);
 
     // Enregistrer les modifications de l'utilisateur dans la base de données
     await user.save();

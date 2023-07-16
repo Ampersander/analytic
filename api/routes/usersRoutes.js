@@ -21,7 +21,7 @@ router.post('/login', authController.login);
 // TODO Route pour la réinitialisation de mot de passe
 // router.post('/reset-password/:token', userController.resetPassword);
 
-// route pour la validation d'un utilisateur par un administrateur
-//router.put('/users/:userId/validate', authenticateJWT, userController.validateUserApp);
+// route pour la validation d'un webmaster par un administrateur
+router.put('/:userId/validate', authenticateJWT, userController.validateWebmaster);
 
 module.exports = router;
