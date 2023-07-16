@@ -18,5 +18,8 @@
 3. Dans ces fichiers `.env`, s'assurer que la base de données, les ports et l'URL de l'API sont corrects.
 4. Toujours dans ces deux dossiers, faire un `npm start` ou lancer la tâche "Start Project" grâce à la palette de commande de VSCode.
 
-## Note
+## Utilisation
 - Le dossier `vue-todo-app/` est une application d'example qui utilise notre SDK.
+
+## Documentation API
+- Vous trouverez les routes de l'API sur [localhost:8000/api-docs](http://localhost:8000/api-docs) une fois le projet lancé.
