@@ -3,9 +3,11 @@ import { Todo } from "../Todo";
 import { useTodos } from "./useTodos";
 
 export function useDeleteTodo() {
-  const todos = useTodos();
+    const todos = useTodos();
 
-  return (id: Todo["id"]) => {
-    todos.value = todos.value.map((t) => toRaw(t)).filter((todo) => todo.id !== id);
-  };
+    return (id: Todo["id"]) => {
+        todos.value = todos.value
+            .map((t) => toRaw(t))
+            .filter((todo) => todo.id !== id);
+    };
 }

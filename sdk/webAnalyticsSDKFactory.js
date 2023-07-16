@@ -63,7 +63,7 @@ class WebAnalyticsSDK {
         //send data to backend
         this.sendDataInfoVisitor({
             appId: this.config.apiId,
-            visitorId,
+            visitorId: this.visitorId || "anonymous",
             ipAddress,
             userAgent,
             browserInfo,
@@ -219,11 +219,11 @@ class WebAnalyticsSDK {
     }
 
     // Méthode pour envoyer les données d'événement au backend
-    trackEvent(eventType, tag, visitorId, eventData) {
+    trackEvent(eventType, tag, eventData) {
         // Vérifier si l'événement est valide
-        if (!eventType || !tag || !visitorId) {
+        if (!eventType || !tag) {
             console.error(
-                "L'événement est invalide. Veuillez fournir un eventType, un tag et un visitorId."
+                "L'événement est invalide. Veuillez fournir un eventType et un tag au minimum."
             );
             return;
         }
@@ -236,7 +236,7 @@ class WebAnalyticsSDK {
             appId: this.config.apiId,
             eventType,
             tag,
-            visitorId,
+            visitorId: this.getVisitorId() || "anonymous",
             eventTime,
             eventData, // Autres données spécifiques à l'événement fournies par l'utilisateur
             // Include other machine information in the payload
@@ -268,20 +268,20 @@ class WebAnalyticsSDK {
     }
 
     // Méthode pour suivre un clic
-    trackClick(tag, visitorId = this.visitorId, eventData) {
-        this.trackEvent("click", tag, visitorId, eventData);
+    trackClick(tag, eventData) {
+        this.trackEvent("click", tag, eventData);
     }
 
     // Méthode pour suivre une soumission de formulaire
-    trackFormSubmission(formId, visitorId, eventData) {
+    trackFormSubmission(formId, eventData) {
         const tag = `form-${formId}-submission`;
-        this.trackEvent("form_submission", tag, visitorId, eventData);
+        this.trackEvent("form_submission", tag, eventData);
     }
 
     // Méthode pour suivre un chargement de page
-    trackPageLoad(pageId, visitorId, eventData) {
+    trackPageLoad(pageId, eventData) {
         const tag = `page-${pageId}-load`;
-        this.trackEvent("page_load", tag, visitorId, eventData);
+        this.trackEvent("page_load", tag, eventData);
     }
 
     // Méthode pour envoyer les données à l'API RESTful
@@ -306,7 +306,7 @@ class WebAnalyticsSDK {
             // Collecte des informations sur l'erreur JavaScript
             const errorData = {
                 appId: this.config.apiId,
-                visitorId: getVisitorId(),
+                visitorId: getVisitorId() || "anonymous",
                 message,
                 source,
                 lineno,
