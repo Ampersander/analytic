@@ -286,18 +286,29 @@ class WebAnalyticsSDK {
 
     // Méthode pour envoyer les données à l'API RESTful
     async sendDataEvent(eventPayload) {
-        // return fetch(`${this.config.apiEndpoint}/api/events`, {
-        //     method: "POST",
-        //     headers: this.addHeader(),
-        //     body: JSON.stringify(eventPayload),
-        // })
-        //     .then((response) => response.json())
-        //     .catch((error) => {
-        //         throw new Error(
-        //             "Erreur lors de l'envoi des données : " + error.message
-        //         );
-        //     });
-        console.log("envoi de données : ", eventPayload);
+        if (navigator?.sendBeacon) {
+            // Utilisation de sendBeacon si disponible
+            const isSent = navigator.sendBeacon(
+                `${this.config.apiEndpoint}/api/events`,
+                JSON.stringify(eventPayload)
+            );
+            if (isSent) {
+                console.log("Événement envoyé avec succès !");
+                return;
+            }
+        }
+
+        return fetch(`${this.config.apiEndpoint}/api/events`, {
+            method: "POST",
+            headers: this.addHeader(),
+            body: JSON.stringify(eventPayload),
+        })
+            .then((response) => response.json())
+            .catch((error) => {
+                throw new Error(
+                    "Erreur lors de l'envoi des données : " + error.message
+                );
+            });
     }
 
     // Méthode pour collecter des informations sur les erreurs JavaScript
@@ -342,6 +353,17 @@ class WebAnalyticsSDK {
 
     // Méthode pour envoyer les données d'erreur à l'API RESTful ou à toute autre destination souhaitée
     async sendErrorData(errorData) {
+        if (navigator?.sendBeacon) {
+            const isSent = navigator.sendBeacon(
+                `${this.config.apiEndpoint}/api/errors`,
+                JSON.stringify(errorData)
+            );
+            if (isSent) {
+                console.log("Erreur JavaScript collectée avec succès !");
+                return;
+            }
+        }
+
         return fetch(`${this.config.apiEndpoint}/api/errors`, {
             method: "POST",
             headers: this.addHeader(),
@@ -357,17 +379,28 @@ class WebAnalyticsSDK {
     }
 
     async sendDataInfoVisitor(data) {
-        // return fetch(`${this.config.apiEndpoint}/api/visitors`, {
-        //     method: "POST",
-        //     headers: this.addHeader(),
-        //     body: JSON.stringify(data),
-        // })
-        //     .then((response) => response.json())
-        //     .catch((error) => {
-        //         throw new Error(
-        //             "Erreur lors de l'envoi des données : " + error.message
-        //         );
-        //     });
-        console.log("Jenvoie dans le init toutes les infos récoltées : ", data);
+        if (navigator?.sendBeacon) {
+            const isSent = navigator.sendBeacon(
+                `${this.config.apiEndpoint}/api/visitors`,
+                JSON.stringify(data)
+            );
+            if (isSent) {
+                console.log("Événement envoyé avec succès !");
+                return;
+            }
+        }
+
+        return fetch(`${this.config.apiEndpoint}/api/visitors`, {
+            method: "POST",
+            headers: this.addHeader(),
+            body: JSON.stringify(data),
+        })
+            .then((response) => response.json())
+            .catch((error) => {
+                throw new Error(
+                    "Erreur lors de l'envoi des données : " + error.message
+                );
+            });
+        // console.log("Jenvoie dans le init toutes les infos récoltées : ", data);
     }
 }
