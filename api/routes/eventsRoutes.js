@@ -19,5 +19,8 @@ router.put('/events/:eventId', authenticateJWT, eventsController.updateEvent);
 // Route pour supprimer un événement
 router.delete('/events/:eventId', authenticateJWT, eventsController.deleteEvent);
 
+//Route pour récupérer tous les événements d'une application
+router.get('/events/app/:appId', authenticateJWT, eventsController.getAllEventsByAppId);
+
 // Export des routes
 module.exports = router;

@@ -1,11 +1,28 @@
 const Event = require('../models/eventModel');
+const User = require('../models/userModel');
+const Visitor = require('../models/visitorModel');
 
 // Méthode pour enregistrer un nouvel événement
 exports.createEvent = async (req, res) => {
     try {
-        const { eventType, tag, visitorId, eventTime, eventData } = req.body;
+        const { eventType, tag, visitorId, eventTime, eventData, appId } = req.body;
+
+        const user = await User.find({ appId: appId });
+
+        if (!user) {
+            return res.status(404).json({ error: 'AppId non trouvé.' });
+        }
+
+        //check if visitorId exist in Visitor collection
+
+        const visitor = await Visitor.find({ visitorId: visitorId });
+
+        if (!visitor) {
+            return res.status(404).json({ error: 'VisitorId non trouvé.' });
+        }
 
         const newEvent = new Event({
+            appId,
             eventType,
             tag,
             visitorId,
@@ -75,7 +92,22 @@ exports.updateEvent = async (req, res) => {
         const { id } = req.params;
         const { eventType, tag, visitorId, eventTime, eventData } = req.body;
 
+        const user = await User.find({ appId: appId });
+
+        if (!user) {
+            return res.status(404).json({ error: 'AppId non trouvé.' });
+        }
+
+        //check if visitorId exist in Visitor collection
+
+        const visitor = await Visitor.find({ visitorId: visitorId });
+
+        if (!visitor) {
+            return res.status(404).json({ error: 'VisitorId non trouvé.' });
+        }
+
         const updatedEvent = await Event.findByIdAndUpdate(id, {
+            appId,
             eventType,
             tag,
             visitorId,
@@ -93,3 +125,29 @@ exports.updateEvent = async (req, res) => {
         res.status(500).json({ error: 'Une erreur s\'est produite lors de la mise à jour de l\'événement.' });
     }
 };
+
+// Méthode pour récupérer tous les événements d'un visiteur
+
+exports.getAllEventsByVisitorId = async (req, res) => {
+    try {
+        const { visitorId } = req.params;
+        const events = await Event.find({ visitorId: visitorId });
+        res.json(events);
+    } catch (error) {
+        console.error("Erreur lors de la récupération des événements :", error);
+        res.status(500).json({ error: 'Une erreur s\'est produite lors de la récupération des événements.' });
+    }
+}
+
+// Méthode pour récupérer tous les événements d'une application
+
+exports.getAllEventsByAppId = async (req, res) => {
+    try {
+        const { appId } = req.params;
+        const events = await Event.find({ appId: appId });
+        res.json(events);
+    } catch (error) {
+        console.error("Erreur lors de la récupération des événements :", error);
+        res.status(500).json({ error: 'Une erreur s\'est produite lors de la récupération des événements.' });
+    }
+}

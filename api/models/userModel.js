@@ -16,15 +16,23 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    companyName: {
+        type: String,
+        required: true,
+    },
+    address: {
+        type: String,
+        required: true,
+    },
     confirmed: {
         type: Boolean,
         default: false,
     },
-    appid: {
+    appId: {
         type: String,
         unique: true,
     },
-    appsecret: {
+    appSecret: {
         type: String,
     },
     corsApp: {

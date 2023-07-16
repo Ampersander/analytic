@@ -1,6 +1,14 @@
 const mongoose = require('mongoose');
 
 const errorSchema = new mongoose.Schema({
+    visitorId: {
+        type: String,
+        required: true
+    },
+    appId: {
+        type: String,
+        required: true
+    },
     message: {
         type: String,
         required: true

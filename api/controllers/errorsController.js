@@ -1,11 +1,31 @@
 const Error = require('../models/errorModel');
+const User = require('../models/userModel');
+const Visitor = require('../models/visitorModel');
 
 // Méthode pour enregistrer une nouvelle erreur
 exports.createError = async (req, res) => {
     try {
-        const { message, source, lineno, colno, error, timestamp } = req.body;
+        const { message, source, lineno, colno, error, timestamp, visitorId, appId } = req.body;
+
+        //check if appId exist in User collection
+
+        const user = await User.find({ appId: appId });
+
+        if (!user) {
+            return res.status(404).json({ error: 'AppId non trouvé.' });
+        }
+
+        //check if visitorId exist in Visitor collection
+
+        const visitor = await Visitor.find({ visitorId: visitorId });
+
+        if (!visitor) {
+            return res.status(404).json({ error: 'VisitorId non trouvé.' });
+        }
 
         const newError = new Error({
+            appId,
+            visitorId,
             message,
             source,
             lineno,
@@ -72,11 +92,13 @@ exports.deleteError = async (req, res) => {
 
 
 exports.updateError = async (req, res) => {
-    try{
+    try {
         const { id } = req.params;
-        const { message, source, lineno, colno, error, timestamp } = req.body;
+        const { message, source, lineno, colno, error, timestamp, visitorId, appId } = req.body;
 
         const updatedError = await Error.findByIdAndUpdate(id, {
+            appId,
+            visitorId,
             message,
             source,
             lineno,
@@ -89,9 +111,60 @@ exports.updateError = async (req, res) => {
             return res.status(404).json({ error: 'Erreur non trouvée.' });
         }
 
+        const user = await User.find({ appId: appId });
+
+        if (!user) {
+            return res.status(404).json({ error: 'AppId non trouvé.' });
+        }
+
+        //check if visitorId exist in Visitor collection
+
+        const visitor = await Visitor.find({ visitorId: visitorId });
+
+        if (!visitor) {
+            return res.status(404).json({ error: 'VisitorId non trouvé.' });
+        }
+
         res.json(updatedError);
-    }catch(error){
+    } catch (error) {
         console.error("Erreur lors de la mise à jour de l'erreur :", error);
         res.status(500).json({ error: 'Une erreur s\'est produite lors de la mise à jour de l\'erreur.' });
     }
 };
+
+// Méthode pour récupérer toutes les erreurs d'un visiteur
+exports.getAllErrorsByVisitorId = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const errors = await Error.find({ visitorId: id });
+
+        if (!errors) {
+            return res.status(404).json({ error: 'Erreur non trouvée.' });
+        }
+
+        res.json(errors);
+    } catch (error) {
+        console.error("Erreur lors de la récupération de l'erreur :", error);
+        res.status(500).json({ error: 'Une erreur s\'est produite lors de la récupération de l\'erreur.' });
+    }
+}
+
+// Méthode pour récupérer toutes les erreurs d'une application
+
+exports.getAllErrorsByAppId = async (req, res) => {
+    try {
+        const { appId } = req.params;
+
+        const errors = await Error.find({ appId: appId });
+
+        if (!errors) {
+            return res.status(404).json({ error: 'Erreur non trouvée.' });
+        }
+
+        res.json(errors);
+    } catch (error) {
+        console.error("Erreur lors de la récupération de l'erreur :", error);
+        res.status(500).json({ error: 'Une erreur s\'est produite lors de la récupération de l\'erreur.' });
+    }
+}

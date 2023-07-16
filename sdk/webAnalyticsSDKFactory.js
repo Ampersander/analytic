@@ -19,19 +19,20 @@ class WebAnalyticsSDK {
     constructor(config) {
         // Configuration par défaut
         this.defaultConfig = {
-            apiEndpoint: "https://api.webanalytics.com",
+            apiEndpoint: config.apiEndpoint || "http://localhost:3000",
+            apiId: config.APP_ID || "",
+            apiSecret: config.apiSecret || "",
             // Autres options de configuration par défaut
         };
+
+        if (!this.defaultConfig.apiId || !this.defaultConfig.apiSecret) {
+            throw new Error("Veuillez fournir un APP_ID et un apiSecret.");
+        }
 
         // Fusionner la configuration par défaut avec celle fournie
         this.config = Object.assign({}, this.defaultConfig, config);
 
-        // Vérifie le APP_ID s'il existe et s'il est valide sinon throw error
-        if (!this.config.APP_ID) {
-            throw new Error("APP_ID is required");
-        } else {
-            this.init();
-        }
+        this.init();
     }
 
     // Initialisation du SDK
@@ -63,6 +64,7 @@ class WebAnalyticsSDK {
 
         //send data to backend
         this.sendDataInfoVisitor({
+            appId: this.config.apiId,
             visitorId,
             ipAddress,
             userAgent,
@@ -234,6 +236,7 @@ class WebAnalyticsSDK {
 
         // Préparation des données à envoyer
         const eventPayload = {
+            appId: this.config.apiId,
             eventType,
             tag,
             visitorId,
@@ -288,9 +291,7 @@ class WebAnalyticsSDK {
     async sendDataEvent(eventPayload) {
         // return fetch(`${this.config.apiEndpoint}/api/events`, {
         //     method: "POST",
-        //     headers: {
-        //         "Content-Type": "application/json",
-        //     },
+        //     headers: this.addHeader(),
         //     body: JSON.stringify(eventPayload),
         // })
         //     .then((response) => response.json())
@@ -307,6 +308,8 @@ class WebAnalyticsSDK {
         window.onerror = (message, source, lineno, colno, error) => {
             // Collecte des informations sur l'erreur JavaScript
             const errorData = {
+                appId: this.config.apiId,
+                visitorId: getVisitorId(),
                 message,
                 source,
                 lineno,
@@ -331,13 +334,35 @@ class WebAnalyticsSDK {
         };
     }
 
+    //create a function to add in header appId and appSecret
+    addHeader() {
+        const headers = new Headers();
+        headers.append("appId", this.config.apiId);
+        headers.append("appSecret", this.config.apiSecret);
+        headers.append("Content-Type", "application/json");
+        return headers;
+    }
+
+    // Méthode pour envoyer les données à l'API RESTful
+    async sendDataEvent(eventPayload) {
+        return fetch(`${this.config.apiEndpoint}/api/events`, {
+            method: "POST",
+            headers: this.addHeader(),
+            body: JSON.stringify(eventPayload),
+        })
+            .then((response) => response.json())
+            .catch((error) => {
+                throw new Error(
+                    "Erreur lors de l'envoi des données : " + error.message
+                );
+            });
+    }
+
     // Méthode pour envoyer les données d'erreur à l'API RESTful ou à toute autre destination souhaitée
     async sendErrorData(errorData) {
         return fetch(`${this.config.apiEndpoint}/api/errors`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
+            headers: this.addHeader(),
             body: JSON.stringify(errorData),
         })
             .then((response) => response.json())
@@ -352,9 +377,7 @@ class WebAnalyticsSDK {
     async sendDataInfoVisitor(data) {
         // return fetch(`${this.config.apiEndpoint}/api/visitors`, {
         //     method: "POST",
-        //     headers: {
-        //         "Content-Type": "application/json",
-        //     },
+        //     headers: this.addHeader(),
         //     body: JSON.stringify(data),
         // })
         //     .then((response) => response.json())
