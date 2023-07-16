@@ -72,7 +72,6 @@ exports.update = async (req, res) => {
 		const { tags, comment } = req.body
 
 		// Vérifier si le tunnel existe
-		debug('req.params', req.params)
 		const tunnel = await Tunnel.findById(id)
 
 		if (!tunnel) {
