@@ -13,7 +13,9 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { forwardRef } from "react";
+import React, { forwardRef, useState, useEffect } from "react";
+import ReactDOM from "react-dom";
+
 
 // prop-types is a library for typechecking of props
 import PropTypes from "prop-types";
@@ -24,10 +26,71 @@ import MDButtonRoot from "components/MDButton/MDButtonRoot";
 // Analytics KPI React contexts
 import { useMaterialUIController } from "context";
 
+export const useClickButtonOutside = (ref, handler) => {
+  React.useEffect(() => {
+    const listener = (event) => {
+      let isButton = false;
+      event.path.forEach((element) => {
+        if (element.tagName === "BUTTON") {
+          isButton = true;
+          return;
+        }
+      });
+
+      if (!isButton) {
+        return;
+      }
+
+      handler(event);
+    };
+
+    document.addEventListener("mousedown", listener);
+    document.addEventListener("touchstart", listener, { passive: false });
+
+    return () => {
+      document.removeEventListener("mousedown", listener);
+      document.removeEventListener("touchstart", listener);
+    };
+  }, [ref, handler]);
+};
+
+function useMouse() {
+  const [mousePosition, setMousePosition] = useState({
+    x : null,
+    y : null
+  })
+
+  useEffect(() => {
+    function handle(e) {
+      setMousePosition({
+        x: e.pageX,
+        y: e.pageY
+      })
+    }
+    document.addEventListener("mousemove", handle)
+    return () => document.removeEventListener("mousemove", handle)
+  })
+
+  return mousePosition
+}
+
+
+
 const MDButton = forwardRef(
   ({ color, variant, size, circular, iconOnly, children, ...rest }, ref) => {
     const [controller] = useMaterialUIController();
     const { darkMode } = controller;
+
+    const mousePosition = useMouse();
+    useEffect(() => {
+      console.log('Position de la souris :', mousePosition.x, mousePosition.y);
+    }, [mousePosition]);
+
+    const handleClickOutside = () => {
+      console.log("Button clicked outside");
+    };
+
+    useClickButtonOutside(ref, handleClickOutside);
 
     return (
       <MDButtonRoot
