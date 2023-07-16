@@ -18,11 +18,8 @@ class AuthService {
     localStorage.removeItem("user");
   }
 
-  register(email, password) {
-    return axios.post(API_URL + "/", {
-      email,
-      password
-    });
+  register(newUser) {
+    return axios.post(API_URL + "/users/register", newUser).then(response => response.data);
   }
 
   getCurrentUser() {
@@ -35,4 +32,5 @@ class AuthService {
   }
 }
 
-export default new AuthService();
+const service = new AuthService()
+export default service

@@ -48,6 +48,7 @@ import CheckButton from "react-validation/build/button";
 
 import AuthService from "../../../services/auth.service";
 import { Button } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const required = value => {
   if (!value) {
@@ -141,25 +142,11 @@ class Basic extends Component {
             textAlign="center"
           >
             <MDTypography variant="h4" fontWeight="medium" color="white" mt={1}>
-              Sign in
+              Connexion
             </MDTypography>
-            <Grid container spacing={3} justifyContent="center" sx={{ mt: 1, mb: 2 }}>
-              <Grid item xs={2}>
-                <MDTypography component={MuiLink} href="#" variant="body1" color="white">
-                  <FacebookIcon color="inherit" />
-                </MDTypography>
-              </Grid>
-              <Grid item xs={2}>
-                <MDTypography component={MuiLink} href="#" variant="body1" color="white">
-                  <GitHubIcon color="inherit" />
-                </MDTypography>
-              </Grid>
-              <Grid item xs={2}>
-                <MDTypography component={MuiLink} href="#" variant="body1" color="white">
-                  <GoogleIcon color="inherit" />
-                </MDTypography>
-              </Grid>
-            </Grid>
+            <MDTypography display="block" variant="button" color="white" my={1}>
+              Connectez-vous pour accéder à nos services
+            </MDTypography>
           </MDBox>
           <MDBox pt={4} pb={3} px={3}>
             <Form
@@ -181,7 +168,7 @@ class Basic extends Component {
               </div>
 
               <div className="form-group">
-                <label htmlFor="password">Password</label>
+                <label htmlFor="password">Mot de passe</label>
                 <Input
                   type="password"
                   name="password"
@@ -219,7 +206,22 @@ class Basic extends Component {
                 }}
               >
               </CheckButton>
-              <Button variant="contained" style={{ color: "#fff", marginTop: 20 }} type="submit">Login</Button>
+              <Button variant="contained" style={{ color: "#fff", marginTop: 20 }} type="submit">Se Connecter</Button>
+              <MDBox mt={3} mb={1}>
+                <MDTypography variant="button" color="text">
+                  Pas de compte ?{" "}
+                  <MDTypography
+                    component={Link}
+                    to="/authentication/sign-up"
+                    variant="button"
+                    color="info"
+                    fontWeight="medium"
+                    textGradient
+                  >
+                    Inscrivez-vous
+                  </MDTypography>
+                </MDTypography>
+              </MDBox>
             </Form>
           </MDBox>
           <button style={{ visibility: "hidden" }}>Login</button>

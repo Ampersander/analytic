@@ -97,7 +97,7 @@ exports.delete = async (req, res) => {
 	try {
 		const { id } = req.params
 
-		const deleted = await Tunnel.findByIdAndDelete(id)
+		const deleted = await Tunnel.deleteById(id)
 
 		if (!deleted) {
 			debug('Tunnel non trouvé :', id)

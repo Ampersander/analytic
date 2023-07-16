@@ -1,16 +1,11 @@
-const mongoose = require('mongoose');
+const MongooseDelete = require('mongoose-delete')
+const { Schema, model, connect } = require('mongoose')
 
-const tunnelSchema = new mongoose.Schema({
-    comment: {
-        type: String,
-        required: true
-    },
-    tags: {
-        type: Array,
-        required: true
-    }
-});
+const TunnelSchema = new Schema({
+	comment: { type: String, required: true },
+	tags: { type: Array, required: true }
+})
 
-const Tunnel = mongoose.model('Tunnel', tunnelSchema);
+TunnelSchema.plugin(MongooseDelete, { deletedAt: true, overrideMethods: true })
 
-module.exports = Tunnel;
+module.exports = model('Tunnel', TunnelSchema)

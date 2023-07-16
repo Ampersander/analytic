@@ -1,5 +1,5 @@
 /**
-=========================================================
+ =========================================================
 * Analytics KPI React - v2.2.0
 =========================================================
 
@@ -8,227 +8,170 @@
 
 Coded by www.creative-tim.com
 
- =========================================================
+=========================================================
 
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-// @mui material components
-import Grid from "@mui/material/Grid";
+import React from 'react'
+import Grid from '@mui/material/Grid'
 
-// Analytics KPI React components
-import MDBox from "components/MDBox";
+import MDBox from 'components/MDBox'
 
+import Footer from 'examples/Footer'
 // Analytics KPI React example components
-import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import Footer from "examples/Footer";
-import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
-import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
-import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
+import DashboardNavbar from 'examples/Navbars/DashboardNavbar'
+import DashboardLayout from 'examples/LayoutContainers/DashboardLayout'
+import ReportsBarChart from 'examples/Charts/BarCharts/ReportsBarChart'
+import ReportsLineChart from 'examples/Charts/LineCharts/ReportsLineChart'
+import ComplexStatisticsCard from 'examples/Cards/StatisticsCards/ComplexStatisticsCard'
 
 // Data
-import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
-import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
+import reportsBarChartData from 'layouts/dashboard/data/reportsBarChartData'
+import reportsLineChartData from 'layouts/dashboard/data/reportsLineChartData'
 
-// Service 
-import ErrorService from "services/error.service";
-import VisitorService from "services/visitor.service";
-import EventService from "services/event.service";
-
-import React from "react";
+// Service
+import TagService from 'services/tag.service'
+import ErrorService from 'services/error.service'
+import EventService from 'services/event.service'
+import TunnelService from 'services/tunnel.service'
+import VisitorService from 'services/visitor.service'
 
 class Dashboard extends React.Component {
+	constructor(props) {
+		super(props)
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      nbErrors: 0,
-      nbVisitors: 0,
-      nbEvents: 0,
-    };
-  }
+		this.state = {
+			nbTags: 0,
+			nbErrors: 0,
+			nbEvents: 0,
+			nbTunnels: 0,
+			nbVisitors: 0
+		}
+	}
 
-  componentDidMount() {
-    this.getNbErrors();
-    this.getNbVisitors();
-    this.getNbEvents();
-  }
+	componentDidMount() {
+		this.getNbTags()
+		// this.getNbErrors()
+		// this.getNbEvents()
+		this.getNbTunnels()
+		// this.getNbVisitors()
+	}
 
-  getNbErrors() {
-    ErrorService.getErrors().then(
-      response => {
+	getNbTags() {
+		TagService.getAll().then(res => {
+			this.setState({ nbTags: res.length })
+		}).catch(e => console.log(e))
+	}
 
-        //count the numbers of errors in data.errors
-        var errors = response.data.errors;
-        var count = 0;
-        for (var i = 0; i < errors.length; i++) {
-          count++;
-        }
+	getNbTunnels() {
+		TunnelService.getAll().then(res => {
+			this.setState({ nbTunnels: res.length })
+		}).catch(e => console.log(e))
+	}
 
-        this.setState({
-          nbErrors: count
-        });
+	getNbErrors() {
+		ErrorService.getErrors().then(res => {
+			this.setState({ nbErrors: res.length })
+		}).catch(e => console.log(e))
+	}
 
-        console.log(response.data);
-      }
-    ).catch(
-      error => {
-        console.log(error);
-      }
-    )
-  }
+	getNbVisitors() {
+		VisitorService.getVisitors().then(res => {
+			this.setState({ nbVisitors: res.length })
+		}).catch(e => console.log(e))
+	}
 
-  getNbVisitors() {
-    VisitorService.getVisitors().then(
-      response => {
+	getNbEvents() {
+		EventService.getEvents().then(res => {
+			this.setState({ nbEvents: res.length })
+		}).catch(e => console.log(e))
+	}
 
-        //count the numbers of visitors in data.visitors
-        var visitors = response.data.visitors;
-        var count = 0;
-        for (var i = 0; i < visitors.length; i++) {
-          count++;
-        }
+	render() {
+		const { sales, tasks } = reportsLineChartData;
+		return (
+			<DashboardLayout>
+				<DashboardNavbar />
 
-        this.setState({
-          nbVisitors: count
-        });
+				<MDBox py={3}>
+					<Grid container spacing={3} alignItems="center">
+						<Grid item xs={12} md={4} lg={2}>
+							<MDBox mb={1.5}>
+								<ComplexStatisticsCard icon="tag" title="Tags" count={this.state.nbTags}
+									// percentage={{ color: "success", amount: "+3%", label: "than last month" }}
+								/>
+							</MDBox>
+						</Grid>
 
-        console.log(response.data);
-      }
-    ).catch(
-      error => {
-        console.log(error);
-      }
-    )
+						<Grid item xs={12} md={4} lg={2}>
+							<MDBox mb={1.5}>
+								<ComplexStatisticsCard color="warning" icon="route" title="Tunnels de conversion" count={this.state.nbTunnels} />
+							</MDBox>
+						</Grid>
 
-  }
+						<Grid item xs={12} md={4} lg={2}>
+							<MDBox mb={1.5}>
+								<ComplexStatisticsCard color="success" icon="event" title="Événements" count={this.state.nbEvents} />
+							</MDBox>
+						</Grid>
 
-  getNbEvents() {
-    EventService.getEvents().then(
-      response => {
+						<Grid item xs={12} md={4} lg={2}>
+							<MDBox mb={1.5}>
+								<ComplexStatisticsCard color="error" icon="error" title="Erreurs" count={this.state.nbErrors} />
+							</MDBox>
+						</Grid>
 
-        //count the numbers of events in data.events
-        var events = response.data.events;
-        var count = 0;
-        for (var i = 0; i < events.length; i++) {
-          count++;
-        }
+						<Grid item xs={12} md={4} lg={2}>
+							<MDBox mb={1.5}>
+								<ComplexStatisticsCard color="primary" icon="person_add" title="Visiteurs" count={this.state.nbVisitors} />
+							</MDBox>
+						</Grid>
+					</Grid>
 
-        this.setState({
-          nbEvents: count
-        });
+					<MDBox mt={4.5}>
+						<Grid container spacing={3}>
+							<Grid item xs={12} md={6} lg={4}>
+								<MDBox mb={3}>
+									<ReportsBarChart
+										color="info"
+										title="Vues du site"
+										date="Données à jour"
+										chart={reportsBarChartData}
+									/>
+								</MDBox>
+							</Grid>
 
-        console.log(response.data);
+							<Grid item xs={12} md={6} lg={4}>
+								<MDBox mb={3}>
+									<ReportsLineChart
+										color="success"
+										title="KPI Event Analytics "
+										// description={<>(<b>+15%</b>) increase in today sales.</>}
+										date="Données à jour"
+										chart={sales}
+									/>
+								</MDBox>
+							</Grid>
 
-      }
-    ).catch(
-      error => {
-        console.log(error);
-      }
-    )
-  }
+							<Grid item xs={12} md={6} lg={4}>
+								<MDBox mb={3}>
+									<ReportsLineChart
+										color="dark"
+										title="Nouveaux Visiteurs"
+										date="Données à jour"
+										chart={tasks}
+									/>
+								</MDBox>
+							</Grid>
+						</Grid>
+					</MDBox>
+				</MDBox>
 
-
-
-
-
-  render() {
-    const { sales, tasks } = reportsLineChartData;
-    return (
-      <DashboardLayout>
-        <DashboardNavbar />
-        <MDBox py={3}>
-          <Grid container spacing={3} alignItems="center">
-            <Grid item xs={12} md={6} lg={3}>
-              <MDBox mb={1.5}>
-                <ComplexStatisticsCard
-                  icon="event"
-                  title="Event"
-                  count={this.state.nbEvents}
-                  percentage={{
-                    color: "success",
-                    amount: "+3%",
-                    label: "than last month",
-                  }}
-                />
-              </MDBox>
-            </Grid>
-            <Grid item xs={12} md={6} lg={3}>
-              <MDBox mb={1.5}>
-                <ComplexStatisticsCard
-                  color="error"
-                  icon="error"
-                  title="Error"
-                  count={this.state.nbErrors}
-                  percentage={{
-                    color: "success",
-                    amount: "",
-                    label: "Just updated",
-                  }}
-                />
-              </MDBox>
-            </Grid>
-            <Grid item xs={12} md={6} lg={3}>
-              <MDBox mb={1.5}>
-                <ComplexStatisticsCard
-                  color="primary"
-                  icon="person_add"
-                  title="Visitors"
-                  count={this.state.nbVisitors}
-                  percentage={{
-                    color: "success",
-                    amount: "",
-                    label: "Just updated",
-                  }}
-                />
-              </MDBox>
-            </Grid>
-          </Grid>
-          <MDBox mt={4.5}>
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={6} lg={4}>
-                <MDBox mb={3}>
-                  <ReportsBarChart
-                    color="info"
-                    title="website views"
-                    date="just updated"
-                    chart={reportsBarChartData}
-                  />
-                </MDBox>
-              </Grid>
-              <Grid item xs={12} md={6} lg={4}>
-                <MDBox mb={3}>
-                  <ReportsLineChart
-                    color="success"
-                    title="KPI Event Analytics "
-                    description={
-                      <>
-                        (<strong>+15%</strong>) increase in today sales.
-                      </>
-                    }
-                    date="updated 4 min ago"
-                    chart={sales}
-                  />
-                </MDBox>
-              </Grid>
-              <Grid item xs={12} md={6} lg={4}>
-                <MDBox mb={3}>
-                  <ReportsLineChart
-                    color="dark"
-                    title="new visitors"
-                    date="just updated"
-                    chart={tasks}
-                  />
-                </MDBox>
-              </Grid>
-            </Grid>
-          </MDBox>
-        </MDBox>
-        <Footer />
-      </DashboardLayout>
-    )
-  }
+				{/* <Footer /> */}
+			</DashboardLayout>
+		)
+	}
 }
 
-export default Dashboard;
+export default Dashboard

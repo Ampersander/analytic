@@ -45,6 +45,7 @@ import Tunnels from 'layouts/tunnels';
 
 // @mui icons
 import Icon from '@mui/material/Icon';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 const routes = [
   {
@@ -70,6 +71,14 @@ const routes = [
     icon: <Icon fontSize="small">login</Icon>,
     route: '/authentication/sign-in',
     component: <SignIn />,
+  },
+  {
+    type: 'collapse',
+    name: 'Inscription',
+    key: 'sign-up',
+    icon: <Icon fontSize="small"><PersonAddIcon /></Icon>,
+    route: '/authentication/sign-up',
+    component: <SignUp />,
   },
   /* {
      type: 'collapse',

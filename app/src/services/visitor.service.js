@@ -3,7 +3,7 @@ import authHeader from './auth-header';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-class AnalyticVisitorsService {
+class VisitorService {
     getVisitorsByVisitorId(visitorIDRequest) {
         return axios.get(`${API_URL}/visitors/` + visitorIDRequest, { headers: authHeader() });
     }
@@ -25,4 +25,5 @@ class AnalyticVisitorsService {
     }
 }
 
-export default new AnalyticVisitorsService();
+const service = new VisitorService()
+export default service
