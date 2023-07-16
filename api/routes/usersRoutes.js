@@ -31,4 +31,11 @@ router.put(
 // get all users (admin)
 router.get("/", authenticateJWT, userController.getAllUsers);
 
+// route pour récupérer les infos du user connecté
+router.get('/me', authenticateJWT, userController.getConnectedUser);
+
+// route modifier les infos du user connecté
+router.put('/me', authenticateJWT, userController.updateUserProfile);
+
+
 module.exports = router;
