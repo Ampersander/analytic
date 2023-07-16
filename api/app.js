@@ -101,6 +101,41 @@ app.use(function (req, res, next) { next(createError(404)) })
 const database = require('./utils/database')
 
 // Connexion à la base de données MongoDB
-database.connectDB()
+database.connectDB().then(() => {
+	// Insérer l'admin au démarrage de l'app
+	const User = require('./models/userModel');
+
+	const admin = new User({
+		name: "Admin",
+		email: "admin@admin.fr",
+		password: "admin",
+		isAdmin: true,
+		confirmed: true,
+		address: "1 rue de l'admin",
+		companyName: "Admin Company",
+		corsApp: "http://admin.com"
+	});
+
+	User.findOne({ email: admin.email })
+		.then(existingData => {
+			if (existingData) {
+				console.log('L\'admin existent déjà, insertion ignorée');
+				process.exit(0);
+			}
+
+			return User.insertMany(admin);
+		})
+		.then(() => {
+			console.log('Admin insérées avec succès');
+			process.exit(0);
+		})
+		.catch(error => {
+			console.error('Erreur lors de la recherche ou de l\'insertion des données :', error);
+			process.exit(1);
+		});
+}).catch((error) => {
+	console.error('Erreur lors de la connexion à la base de données :', error);
+	process.exit(1);
+});
 
 module.exports = app
