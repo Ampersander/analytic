@@ -13,26 +13,57 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-// react-router-dom components
 import { Link } from "react-router-dom";
-
-// @mui material components
 import Card from "@mui/material/Card";
 import Checkbox from "@mui/material/Checkbox";
-
-// Analytics KPI React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
-
-// Authentication layout components
 import CoverLayout from "layouts/authentication/components/CoverLayout";
-
-// Images
 import bgImage from "assets/images/bg-sign-up-cover.jpeg";
+import AuthService from "../../../services/auth.service";
+import React, { useState } from "react";
 
 function Cover() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [address, setAddress] = useState("");
+  const [corsApp, setCorsApp] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Simple validation
+    if (!name || !email || !password || !companyName || !address || !corsApp) {
+      setError("Veuillez remplir tous les champs.");
+      return;
+    }
+
+    const formData = {
+      name,
+      email,
+      password,
+      companyName,
+      address,
+      corsApp
+    };
+
+    AuthService.register(formData)
+      .then((response) => {
+        console.log("Registration successful");
+        // Rediriger vers une page de succès ou effectuer d'autres actions
+        window.location.href = "/authentication/sign-in";
+      })
+      .catch((error) => {
+        console.error("Registration error:", error);
+        setError("Une erreur s'est produite lors de l'inscription.");
+      });
+  };
+
   return (
     <CoverLayout image={bgImage}>
       <Card>
@@ -48,52 +79,93 @@ function Cover() {
           textAlign="center"
         >
           <MDTypography variant="h4" fontWeight="medium" color="white" mt={1}>
-            Join us today
+            Inscription
           </MDTypography>
           <MDTypography display="block" variant="button" color="white" my={1}>
-            Enter your email and password to register
+            Inscrivez-vous pour accéder à nos services
           </MDTypography>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
-          <MDBox component="form" role="form">
+          <MDBox component="form" role="form" onSubmit={handleSubmit}>
             <MDBox mb={2}>
-              <MDInput type="text" label="Name" variant="standard" fullWidth />
+              <MDInput
+                type="text"
+                label="Votre nom"
+                variant="standard"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                fullWidth
+                required
+              />
             </MDBox>
             <MDBox mb={2}>
-              <MDInput type="email" label="Email" variant="standard" fullWidth />
+              <MDInput
+                type="email"
+                label="Email"
+                variant="standard"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                fullWidth
+                required
+              />
             </MDBox>
             <MDBox mb={2}>
-              <MDInput type="password" label="Password" variant="standard" fullWidth />
+              <MDInput
+                type="password"
+                label="Mot de passe"
+                variant="standard"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                fullWidth
+                required
+              />
             </MDBox>
-            <MDBox display="flex" alignItems="center" ml={-1}>
-              <Checkbox />
-              <MDTypography
-                variant="button"
-                fontWeight="regular"
-                color="text"
-                sx={{ cursor: "pointer", userSelect: "none", ml: -1 }}
-              >
-                &nbsp;&nbsp;I agree the&nbsp;
-              </MDTypography>
-              <MDTypography
-                component="a"
-                href="#"
-                variant="button"
-                fontWeight="bold"
-                color="info"
-                textGradient
-              >
-                Terms and Conditions
-              </MDTypography>
+            <MDBox mb={2}>
+              <MDInput
+                type="text"
+                label="Nom de société"
+                variant="standard"
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                fullWidth
+                required
+              />
             </MDBox>
+            <MDBox mb={2}>
+              <MDInput
+                type="text"
+                label="Adresse"
+                variant="standard"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                fullWidth
+                required
+              />
+            </MDBox>
+            <MDBox mb={2}>
+              <MDInput
+                type="text"
+                label="URL de votre site"
+                variant="standard"
+                value={corsApp}
+                onChange={(e) => setCorsApp(e.target.value)}
+                fullWidth
+                required
+              />
+            </MDBox>
+            {error && (
+              <MDBox mt={2} color="error.main">
+                {error}
+              </MDBox>
+            )}
             <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" fullWidth>
-                sign in
+              <MDButton variant="gradient" color="info" fullWidth type="submit">
+                Inscription
               </MDButton>
             </MDBox>
             <MDBox mt={3} mb={1} textAlign="center">
               <MDTypography variant="button" color="text">
-                Already have an account?{" "}
+                Vous avez un compte ?{" "}
                 <MDTypography
                   component={Link}
                   to="/authentication/sign-in"
@@ -102,7 +174,7 @@ function Cover() {
                   fontWeight="medium"
                   textGradient
                 >
-                  Sign In
+                  Connectez-vous
                 </MDTypography>
               </MDTypography>
             </MDBox>
