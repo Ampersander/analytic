@@ -3,11 +3,11 @@ const Event = require('../models/eventModel');
 // Méthode pour enregistrer un nouvel événement
 exports.createEvent = async (req, res) => {
     try {
-        const { eventType, actionId, visitorId, eventTime, eventData } = req.body;
+        const { eventType, tag, visitorId, eventTime, eventData } = req.body;
 
         const newEvent = new Event({
             eventType,
-            actionId,
+            tag,
             visitorId,
             eventTime,
             eventData
@@ -73,11 +73,11 @@ exports.deleteEvent = async (req, res) => {
 exports.updateEvent = async (req, res) => {
     try {
         const { id } = req.params;
-        const { eventType, actionId, visitorId, eventTime, eventData } = req.body;
+        const { eventType, tag, visitorId, eventTime, eventData } = req.body;
 
         const updatedEvent = await Event.findByIdAndUpdate(id, {
             eventType,
-            actionId,
+            tag,
             visitorId,
             eventTime,
             eventData

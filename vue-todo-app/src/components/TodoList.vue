@@ -8,35 +8,35 @@ const todos = useTodos();
 </script>
 
 <template>
-  <transition-group tag="ul">
-    <todo-list-item v-for="todo in todos" :key="todo.id" :todo="todo" />
-    <button key="add" @click="addTodo">+</button>
-  </transition-group>
+    <transition-group tag="ul">
+        <todo-list-item v-for="todo in todos" :key="todo.id" :todo="todo" />
+        <button key="add" @click="addTodo" v-tracker="'Plus-todo'">+</button>
+    </transition-group>
 </template>
 
 <style scoped>
 ul {
-  width: 100%;
-  list-style: none;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+    width: 100%;
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
 button {
-  align-self: flex-start;
+    align-self: flex-start;
 }
 
 .v-enter-active,
 .v-leave-active {
-  transition: all 0.5s ease;
+    transition: all 0.5s ease;
 }
 .v-leave-to {
-  opacity: 0;
-  transform: translateX(30px);
+    opacity: 0;
+    transform: translateX(30px);
 }
 .v-enter-from {
-  opacity: 0;
+    opacity: 0;
 }
 </style>
