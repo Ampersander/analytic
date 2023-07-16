@@ -5,7 +5,7 @@ const Visitor = require('../models/visitorModel');
 // Méthode pour enregistrer un nouvel événement
 exports.createEvent = async (req, res) => {
     try {
-        const { eventType, actionId, visitorId, eventTime, eventData, appId } = req.body;
+        const { eventType, tag, visitorId, eventTime, eventData, appId } = req.body;
 
         const user = await User.find({ appId: appId });
 
@@ -24,7 +24,7 @@ exports.createEvent = async (req, res) => {
         const newEvent = new Event({
             appId,
             eventType,
-            actionId,
+            tag,
             visitorId,
             eventTime,
             eventData
@@ -107,7 +107,7 @@ exports.deleteEvent = async (req, res) => {
 exports.updateEvent = async (req, res) => {
     try {
         const { id } = req.params;
-        const { eventType, actionId, visitorId, eventTime, eventData, appId } = req.body;
+        const { eventType, tag, visitorId, eventTime, eventData, appId } = req.body;
 
         if (!req.user.isAdmin) {
             if (req.user.appId !== appId) {
@@ -132,7 +132,7 @@ exports.updateEvent = async (req, res) => {
         const updatedEvent = await Event.findByIdAndUpdate(id, {
             appId,
             eventType,
-            actionId,
+            tag,
             visitorId,
             eventTime,
             eventData
