@@ -127,7 +127,7 @@ const Tags = () => {
                     </Card>
 
                     <Box mt={4} display="flex" justifyContent="center" flexWrap="wrap">
-                        {tags.map((tag) => (
+                        {tags?.map((tag) => (
                             <Chip
                                 key={tag._id}
                                 label={tag.comment}
