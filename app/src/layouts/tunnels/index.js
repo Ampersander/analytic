@@ -1,187 +1,99 @@
-import PropTypes from 'prop-types'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import {
-	autocompleteClasses,
 	Autocomplete,
 	Box,
 	Button,
-	ButtonBase,
 	Card,
 	CardContent,
 	Chip,
-	ClickAwayListener,
 	Container,
 	Dialog,
 	DialogActions,
 	DialogContent,
 	DialogTitle,
 	FormControl,
+	FormHelperText,
 	Grid,
-	IconButton,
-	InputBase,
-	Popper,
-	styled,
 	TextField,
-	Typography,
-	useTheme
+	Typography
 } from '@mui/material'
-import { Close, Done, Edit } from '@mui/icons-material'
+import { Close } from '@mui/icons-material'
 
+import tagService from 'services/tag.service'
 import tunnelService from 'services/tunnel.service'
 import DashboardNavbar from 'examples/Navbars/DashboardNavbar'
 import DashboardLayout from 'examples/LayoutContainers/DashboardLayout'
 
-const StyledAutocompletePopper = styled('div')(({ theme }) => ({
-	[`& .${autocompleteClasses.paper}`]: {
-		boxShadow: 'none',
-		margin: 0,
-		color: 'inherit',
-		fontSize: 13,
-	},
-	[`& .${autocompleteClasses.listbox}`]: {
-		backgroundColor: theme.palette.mode === 'light' ? '#fff' : '#1c2128',
-		padding: 0,
-		[`& .${autocompleteClasses.option}`]: {
-			minHeight: 'auto',
-			alignItems: 'flex-start',
-			padding: 8,
-			borderBottom: `1px solid  ${theme.palette.mode === 'light' ? ' #eaecef' : '#30363d'
-				}`,
-			'&[aria-selected="true"]': {
-				backgroundColor: 'transparent',
-			},
-			[`&.${autocompleteClasses.focused}, &.${autocompleteClasses.focused}[aria-selected="true"]`]:
-			{
-				backgroundColor: theme.palette.action.hover,
-			}
-		}
-	},
-	[`&.${autocompleteClasses.popperDisablePortal}`]: {
-		position: 'relative',
-	}
-}))
-
-function PopperComponent(props) {
-	const { disablePortal, anchorEl, open, ...other } = props
-	return <StyledAutocompletePopper {...other} />
-}
-
-PopperComponent.propTypes = {
-	anchorEl: PropTypes.any,
-	disablePortal: PropTypes.bool,
-	open: PropTypes.bool.isRequired
-}
-
-const StyledPopper = styled(Popper)(({ theme }) => ({
-	width: 300,
-	fontSize: 13,
-	borderRadius: 6,
-	zIndex: theme.zIndex.modal,
-	color: theme.palette.mode === 'light' ? '#24292e' : '#c9d1d9',
-	backgroundColor: theme.palette.mode === 'light' ? '#fff' : '#1c2128',
-	border: `1px solid ${theme.palette.mode === 'light' ? '#e1e4e8' : '#30363d'}`,
-	boxShadow: `0 8px 24px ${theme.palette.mode === 'light' ? 'rgba(149, 157, 165, 0.2)' : 'rgb(1, 4, 9)'}`
-}))
-
-const StyledInput = styled(InputBase)(({ theme }) => ({
-	padding: 10,
-	width: '100%',
-	borderBottom: `1px solid ${theme.palette.mode === 'light' ? '#eaecef' : '#30363d'}`,
-	'& input': {
-		padding: 8,
-		fontSize: 14,
-		borderRadius: 4,
-		transition: theme.transitions.create(['border-color', 'box-shadow']),
-		backgroundColor: theme.palette.mode === 'light' ? '#fff' : '#0d1117',
-		border: `1px solid ${theme.palette.mode === 'light' ? '#eaecef' : '#30363d'}`,
-		'&:focus': {
-			borderColor: theme.palette.mode === 'light' ? '#0366d6' : '#388bfd',
-			boxShadow: `0px 0px 0px 3px ${theme.palette.mode === 'light' ? 'rgba(3, 102, 214, 0.3)' : 'rgb(12, 45, 107)' }`
-		}
-	}
-}))
-
-const Btn = styled(ButtonBase)(({ theme }) => ({
-	fontSize: 13,
-	width: '100%',
-	paddingBottom: 8,
-	textAlign: 'left',
-	fontWeight: 600,
-	color: theme.palette.mode === 'light' ? '#586069' : '#8b949e',
-	'&:hover, &:focus': {
-		color: theme.palette.mode === 'light' ? '#0366d6' : '#58a6ff'
-	},
-	'& svg': {
-		width: 16,
-		height: 16
-	},
-	'& span': {
-		width: '100%'
-	}
-}))
-
 export default function Tunnels() {
+	const defaults = { tags: [], comment: '' }
+	const [tags, setTags] = useState([])
 	const [items, setItems] = useState([])
-	const [anchorEl, setAnchorEl] = useState(null)
-	const [newComment, setNewComment] = useState('')
-	const [inputs, setInputs] = useState({ tags: [], comment: '' })
-	const [errors, setErrors] = useState(inputs)
-	const [editTunnel, setEditTunnel] = useState(inputs)
+	const [inputs, setInputs] = useState(defaults)
+	const [editInputs, setEditInputs] = useState(defaults)
 	const [openEditDialog, setOpenEditDialog] = useState(false)
 
-	const handleChange = (name, value) => {
-		setInputs(values => ({ ...values, [name]: value }))
-		setErrors(values => ({ ...values, [name]: value === '' ? true : false }))
+	const handleChange = (name, value) => setInputs(values => ({ ...values, [name]: value }))
+	const handleEditChange = (name, value) => setEditInputs(values => ({ ...values, [name]: value }))
+
+	const handleAdd = async () => {
+		const created = await tunnelService.create(inputs)
+
+		// TODO show success toast
+		setItems([...items, created])
+		setInputs(defaults)
 	}
 
-	const handleAddTunnel = async () => {
-		const createdTunnel = await tunnelService.create(inputs)
-		console.log(createdTunnel)
-
-		setItems([...items, inputs])
-		setInputs({ tags: [], comment: '' })
-	}
-
-	const handleEdit = tunnel => {
-		setEditTunnel(tunnel)
-		setInputs(tunnel)
+	const handleEdit = item => {
+		setEditInputs(item)
 		setOpenEditDialog(true)
 	}
 
-	const handleSaveEditTunnel = async () => {
-		await tunnelService.update({ ...editTunnel, comment: newComment })
-		await fetchTunnels()
+	const handleSaveEdit = async () => {
+		await tunnelService.update(editInputs._id, editInputs)
+		// TODO show success toast
+
+		await fetchTags()
+		await fetchItems()
 		handleCloseEditDialog()
 	}
 
 	const handleCloseEditDialog = () => {
 		setOpenEditDialog(false)
-		setEditTunnel(null)
-		setInputs({ tags: [], comment: '' })
+		setEditInputs(defaults)
 	}
 
 	const handleDelete = async item => {
 		await tunnelService.delete(item._id)
+		// TODO show success toast
+
 		setItems(items.filter(_ => _._id !== item._id))
 	}
 
-	const cardContentStyle = {
-		paddingTop: 24,
+	const fetchTags = async () => {
+		const data = await tagService.getAll()
+		setTags(data)
 	}
 
-	const titleStyle = {
-		marginBottom: 24,
+	const fetchItems = async () => {
+		const data = await tunnelService.getAll()
+		setItems(data)
 	}
 
-	const fetchTunnels = async () => {
-		const tunnels = await tunnelService.getAll()
-		setItems(tunnels)
-	}
-
+	// Fetch data on component mount
 	useEffect(() => {
-		fetchTunnels()
+		fetchTags()
+		fetchItems()
 	}, [])
+
+	// Trim inputs of type string after 1s
+	useEffect(() => {
+		const t = setTimeout(() => {
+			setInputs(inputs => ({ ...inputs, comment: inputs.comment.trim() }))
+			setEditInputs(editInputs => ({ ...editInputs, comment: editInputs.comment.trim() }))
+		}, 1000)
+		return () => clearTimeout(t)
+	}, [inputs.comment, editInputs.comment])
 
 	return (
 		<DashboardLayout>
@@ -189,42 +101,60 @@ export default function Tunnels() {
 
 			<Container maxWidth="md">
 				<Box my={4}>
-					<Typography variant="h5" component="h1" align="center" style={titleStyle} gutterBottom>
+					<Typography variant="h5" component="h1" align="center" style={{ marginBottom: 24 }} gutterBottom>
 						Ajouter un Tunnel
 					</Typography>
 
 					<Card>
-						<CardContent style={cardContentStyle}>
+						<CardContent style={{ paddingTop: 24 }}>
 							<Grid container spacing={2} alignItems="center" justifyContent="center">
-								{/* <Grid item xs={12} sm={12}>
-									<FormControl fullWidth>
-										<Autocomplete
-											options={'Sélectionner des tags'}
-											options={tags}
-										/>
-									</FormControl>
-								</Grid> */}
-
 								<Grid item xs={12} sm={12}>
 									<FormControl fullWidth>
 										<TextField
-											label="Comment"
+											label="Commentaire"
 											value={inputs.comment}
 											onBlur={e => handleChange('comment', e.target.value)}
 											onChange={e => handleChange('comment', e.target.value)}
 											fullWidth
 										/>
+
+										{inputs.comment.trim() === ''
+											? (<FormHelperText sx={{ color: 'red' }}>Le commentaire est obligatoire.</FormHelperText>)
+											: (<FormHelperText>Le commentaire du tunnel.</FormHelperText>)
+										}
+									</FormControl>
+								</Grid>
+
+								<Grid item xs={12} sm={12}>
+									<FormControl fullWidth>
+										<Autocomplete
+											multiple
+											fullWidth
+											openOnFocus
+											limitTags={5}
+											options={tags}
+											value={tags.filter(_ => inputs.tags.includes(_._id))}
+											getOptionLabel={_ => _.comment}
+											isOptionEqualToValue={(option, value) => option._id === value._id}
+											renderInput={params => <TextField {...params} label="Tags" placeholder="Tags" />}
+											onChange={(e, value) => handleChange('tags', value.map(_ => _._id))}
+										/>
+
+										{inputs.tags.length === 0
+											? (<FormHelperText sx={{ color: 'red' }}>Au moins un tag est obligatoire.</FormHelperText>)
+											: (<FormHelperText>Les tags du tunnel.</FormHelperText>)
+										}
 									</FormControl>
 								</Grid>
 
 								<Grid item xs={12} sm={12}>
 									<Button
-										variant="contained"
+										sx={{ color: '#fff' }}
 										color="primary"
-										onClick={handleAddTunnel}
-										disabled={!newComment}
+										variant="contained"
+										disabled={inputs.comment.trim() === '' || inputs.tags.length === 0}
 										fullWidth
-										style={{ color: '#fff' }}
+										onClick={handleAdd}
 									>
 										Add Tunnel
 									</Button>
@@ -249,24 +179,52 @@ export default function Tunnels() {
 				</Box>
 
 				<Dialog open={openEditDialog} onClose={handleCloseEditDialog}>
-					<DialogTitle>Edit Tunnel</DialogTitle>
+					<DialogTitle>Modifier le tunnel</DialogTitle>
 
-					<DialogContent>
-						<FormControl fullWidth>
-							<TextField
-								label="Comment"
-								value={inputs.comment}
-								onBlur={e => handleChange('comment', e.target.value)}
-								onChange={e => handleChange('comment', e.target.value)}
-								fullWidth
-							/>
-						</FormControl>
+					<DialogContent style={{ paddingTop: 24 }}>
+						<Grid container spacing={2} alignItems="center" justifyContent="center">
+							<Grid item xs={12} sm={12}>
+								<FormControl fullWidth>
+									<TextField
+										label="Commentaire"
+										value={editInputs.comment}
+										onBlur={e => handleEditChange('comment', e.target.value)}
+										onChange={e => handleEditChange('comment', e.target.value)}
+										fullWidth
+									/>
+
+									{editInputs.comment.trim() === ''
+										? (<FormHelperText sx={{ color: 'red' }}>Le commentaire est obligatoire.</FormHelperText>)
+										: (<FormHelperText>Le commentaire du tunnel.</FormHelperText>)
+									}
+								</FormControl>
+							</Grid>
+
+							<Grid item xs={12} sm={12}>
+								<FormControl fullWidth>
+									<Autocomplete
+										multiple
+										readOnly
+										fullWidth
+										options={tags}
+										value={tags.filter(_ => editInputs.tags.includes(_._id))}
+										getOptionLabel={_ => _.comment}
+										isOptionEqualToValue={(option, value) => option._id === value._id}
+										renderInput={params => <TextField {...params} label="Tags" placeholder="Tags" />}
+									/>
+
+									{editInputs.tags.length === 0
+										? (<FormHelperText sx={{ color: 'red' }}>Au moins un tag est obligatoire.</FormHelperText>)
+										: (<FormHelperText>Les tags du tunnel (non modifiable).</FormHelperText>)
+									}
+								</FormControl>
+							</Grid>
+						</Grid>
 					</DialogContent>
+
 					<DialogActions>
 						<Button onClick={handleCloseEditDialog}>Cancel</Button>
-						<Button onClick={handleSaveEditTunnel} color="primary">
-							Save
-						</Button>
+						<Button color="primary" disabled={editInputs.comment.trim() === '' || editInputs.tags.length === 0} onClick={handleSaveEdit}>Save</Button>
 					</DialogActions>
 				</Dialog>
 			</Container>
