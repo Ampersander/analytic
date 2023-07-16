@@ -14,9 +14,12 @@
 
 ## Installation
 1. Faire un `<npm|yarn|pnpm> install` dans chaque répertoire.
-2. Dans `api/`, renommer le fichier `.env.sample` dans `.env`.
-3. Dans ce fichier `.env`, s'assurer que la base de données soit bien configurée.
-4. Faire un `npm start` dans `api/` puis dans `app/` ou lancer la tâche "Start Project" dans la palette de commande de VSCode.
+2. Dans `api/` et `app/`, renommer les fichiers `.env.sample` en `.env`.
+3. Dans ces fichiers `.env`, s'assurer que la base de données, les ports et l'URL de l'API sont corrects.
+4. Toujours dans ces deux dossiers, faire un `npm start` ou lancer la tâche "Start Project" grâce à la palette de commande de VSCode.
 
-## Note
+## Utilisation
 - Le dossier `vue-todo-app/` est une application d'example qui utilise notre SDK.
+
+## Documentation API
+- Vous trouverez les routes de l'API sur [localhost:8000/api-docs](http://localhost:8000/api-docs) une fois le projet lancé.

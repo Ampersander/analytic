@@ -76,6 +76,10 @@ app.use('/api/errors', errorsRoutes)
 const tagsRoutes = require('./routes/tagsRoutes')
 app.use('/api/tags', tagsRoutes)
 
+// Middleware pour les routes des tunnels
+const tunnelsRoutes = require('./routes/tunnelsRoutes')
+app.use('/api/tunnels', tunnelsRoutes)
+
 // Midleware pour les routes des utilisateurs
 const usersRoutes = require('./routes/usersRoutes')
 app.use('/api/users', usersRoutes)
