@@ -13,15 +13,6 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-// @mui material components
-import Grid from "@mui/material/Grid";
-import Divider from "@mui/material/Divider";
-
-// @mui icons
-import FacebookIcon from "@mui/icons-material/Facebook";
-import TwitterIcon from "@mui/icons-material/Twitter";
-import InstagramIcon from "@mui/icons-material/Instagram";
-
 // Analytics KPI React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
@@ -30,170 +21,189 @@ import MDTypography from "components/MDTypography";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
-import ProfileInfoCard from "examples/Cards/InfoCards/ProfileInfoCard";
-import ProfilesList from "examples/Lists/ProfilesList";
-import DefaultProjectCard from "examples/Cards/ProjectCards/DefaultProjectCard";
 
 // Overview page components
 import Header from "layouts/profile/components/Header";
-import PlatformSettings from "layouts/profile/components/PlatformSettings";
 
-// Data
-import profilesListData from "layouts/profile/data/profilesListData";
-
-// Images
-import homeDecor1 from "assets/images/home-decor-1.jpg";
-import homeDecor2 from "assets/images/home-decor-2.jpg";
-import homeDecor3 from "assets/images/home-decor-3.jpg";
-import homeDecor4 from "assets/images/home-decor-4.jpeg";
-import team1 from "assets/images/team-1.jpg";
-import team2 from "assets/images/team-2.jpg";
-import team3 from "assets/images/team-3.jpg";
-import team4 from "assets/images/team-4.jpg";
+import { useState, useEffect } from "react";
+import AuthService from "services/auth.service";
+import { Box, Typography, Button, TextField } from "@mui/material";
 
 function Overview() {
+  const [currentUser, setCurrentUser] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [updatedUser, setUpdatedUser] = useState({
+    name: "",
+    email: "",
+    password: "",
+    companyName: "",
+    address: "",
+    corsApp: "",
+    appId: "",
+    appSecret: "",
+  });
+
+  useEffect(() => {
+    AuthService.getProfile().then((user) => {
+      setCurrentUser(user);
+      setUpdatedUser({
+        name: user.name,
+        email: user.email,
+        password: "",
+        companyName: user.companyName,
+        address: user.address,
+        corsApp: user.corsApp,
+        appId: user.appId,
+        appSecret: user.appSecret,
+      });
+    });
+  }, []);
+
+  const handleEdit = () => {
+    setEditMode(true);
+  };
+
+  const handleSave = (e) => {
+    e.preventDefault();
+
+    console.log(updatedUser);
+    AuthService.updateProfile(updatedUser)
+      .then((response) => {
+        const user = response.data;
+        setCurrentUser(user);
+        setEditMode(false);
+      })
+      .catch((error) => {
+        console.error("Erreur lors de la mise à jour du profil :", error);
+      });
+  };
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setUpdatedUser((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox mb={2} />
-      <Header>
-        <MDBox mt={5} mb={3}>
-          <Grid container spacing={1}>
-            <Grid item xs={12} md={6} xl={4}>
-              <PlatformSettings />
-            </Grid>
-            <Grid item xs={12} md={6} xl={4} sx={{ display: "flex" }}>
-              <Divider orientation="vertical" sx={{ ml: -2, mr: 1 }} />
-              <ProfileInfoCard
-                title="profile information"
-                description="Hi, I’m Alec Thompson, Decisions: If you can’t decide, the answer is no. If two equally difficult paths, choose the one more painful in the short term (pain avoidance is creating an illusion of equality)."
-                info={{
-                  fullName: "Alec M. Thompson",
-                  mobile: "(44) 123 1234 123",
-                  email: "alecthompson@mail.com",
-                  location: "USA",
-                }}
-                social={[
-                  {
-                    link: "https://www.facebook.com/CreativeTim/",
-                    icon: <FacebookIcon />,
-                    color: "facebook",
-                  },
-                  {
-                    link: "https://twitter.com/creativetim",
-                    icon: <TwitterIcon />,
-                    color: "twitter",
-                  },
-                  {
-                    link: "https://www.instagram.com/creativetimofficial/",
-                    icon: <InstagramIcon />,
-                    color: "instagram",
-                  },
-                ]}
-                action={{ route: "", tooltip: "Edit Profile" }}
-                shadow={false}
+      <Header currentUser={currentUser}>
+        <Typography variant="h2" fontWeight="bold" textAlign="center">Mon Profil</Typography>
+        <Box mt={5} mb={3} display="flex" justifyContent="center">
+          {currentUser && !editMode && (
+            <Box display="flex" flexDirection="column" alignItems="flex-start">
+              <Typography variant="h6" fontWeight="bold" mb={2}>
+                Nom: <span style={{ fontWeight: "normal" }}>{currentUser.name}</span>
+              </Typography>
+              <Typography variant="h6" fontWeight="bold" mb={2}>
+                Email: <span style={{ fontWeight: "normal" }}>{currentUser.email}</span>
+              </Typography>
+              <Typography variant="h6" fontWeight="bold" mb={2}>
+                Mot de passe: <span style={{ fontWeight: "normal" }}>{currentUser.password}</span>
+              </Typography>
+              <Typography variant="h6" fontWeight="bold" mb={2}>
+                Nom de l'entreprise: <span style={{ fontWeight: "normal" }}>{currentUser.companyName}</span>
+              </Typography>
+              <Typography variant="h6" fontWeight="bold" mb={2}>
+                Adresse: <span style={{ fontWeight: "normal" }}>{currentUser.address}</span>
+              </Typography>
+              <Typography variant="h6" fontWeight="bold" mb={2}>
+                URL Site: <span style={{ fontWeight: "normal" }}>{currentUser.corsApp}</span>
+              </Typography>
+              <Typography variant="h6" fontWeight="bold" mb={2}>
+                App ID: <span style={{ fontWeight: "normal" }}>{currentUser.appId}</span>
+              </Typography>
+              <Typography variant="h6" fontWeight="bold" mb={2}>
+                App Secret: <span style={{ fontWeight: "normal" }}>{currentUser.appSecret}</span>
+              </Typography>
+              <Button variant="contained" onClick={handleEdit} sx={{ mt: 2 }} style={{ color: '#fff' }}>
+                Modifier
+              </Button>
+            </Box>
+          )}
+          {currentUser && editMode && (
+            <Box
+              component="form"
+              display="flex"
+              flexDirection="column"
+              alignItems="flex-start"
+              onSubmit={handleSave}
+            >
+              <TextField
+                name="name"
+                label="Nom"
+                value={updatedUser.name}
+                onChange={handleInputChange}
+                sx={{ mt: 1, mb: 2 }}
+                required
               />
-              <Divider orientation="vertical" sx={{ mx: 0 }} />
-            </Grid>
-            <Grid item xs={12} xl={4}>
-              <ProfilesList title="conversations" profiles={profilesListData} shadow={false} />
-            </Grid>
-          </Grid>
-        </MDBox>
-        <MDBox pt={2} px={2} lineHeight={1.25}>
-          <MDTypography variant="h6" fontWeight="medium">
-            Projects
-          </MDTypography>
-          <MDBox mb={1}>
-            <MDTypography variant="button" color="text">
-              Architects design houses
-            </MDTypography>
-          </MDBox>
-        </MDBox>
-        <MDBox p={2}>
-          <Grid container spacing={6}>
-            <Grid item xs={12} md={6} xl={3}>
-              <DefaultProjectCard
-                image={homeDecor1}
-                label="project #2"
-                title="modern"
-                description="As Uber works through a huge amount of internal management turmoil."
-                action={{
-                  type: "internal",
-                  route: "/pages/profile/profile-overview",
-                  color: "info",
-                  label: "view project",
-                }}
-                authors={[
-                  { image: team1, name: "Elena Morison" },
-                  { image: team2, name: "Ryan Milly" },
-                  { image: team3, name: "Nick Daniel" },
-                  { image: team4, name: "Peterson" },
-                ]}
+              <TextField
+                name="email"
+                label="Email"
+                value={updatedUser.email}
+                onChange={handleInputChange}
+                sx={{ mt: 1, mb: 2 }}
+                required
               />
-            </Grid>
-            <Grid item xs={12} md={6} xl={3}>
-              <DefaultProjectCard
-                image={homeDecor2}
-                label="project #1"
-                title="scandinavian"
-                description="Music is something that everyone has their own specific opinion about."
-                action={{
-                  type: "internal",
-                  route: "/pages/profile/profile-overview",
-                  color: "info",
-                  label: "view project",
-                }}
-                authors={[
-                  { image: team3, name: "Nick Daniel" },
-                  { image: team4, name: "Peterson" },
-                  { image: team1, name: "Elena Morison" },
-                  { image: team2, name: "Ryan Milly" },
-                ]}
+              <TextField
+                type="password"
+                name="password"
+                label="Mot de passe"
+                value={updatedUser.password}
+                onChange={handleInputChange}
+                sx={{ mt: 1, mb: 2 }}
+                required
               />
-            </Grid>
-            <Grid item xs={12} md={6} xl={3}>
-              <DefaultProjectCard
-                image={homeDecor3}
-                label="project #3"
-                title="minimalist"
-                description="Different people have different taste, and various types of music."
-                action={{
-                  type: "internal",
-                  route: "/pages/profile/profile-overview",
-                  color: "info",
-                  label: "view project",
-                }}
-                authors={[
-                  { image: team4, name: "Peterson" },
-                  { image: team3, name: "Nick Daniel" },
-                  { image: team2, name: "Ryan Milly" },
-                  { image: team1, name: "Elena Morison" },
-                ]}
+              <TextField
+                name="companyName"
+                label="Nom de l'entreprise"
+                value={updatedUser.companyName}
+                onChange={handleInputChange}
+                sx={{ mt: 1, mb: 2 }}
+                required
               />
-            </Grid>
-            <Grid item xs={12} md={6} xl={3}>
-              <DefaultProjectCard
-                image={homeDecor4}
-                label="project #4"
-                title="gothic"
-                description="Why would anyone pick blue over pink? Pink is obviously a better color."
-                action={{
-                  type: "internal",
-                  route: "/pages/profile/profile-overview",
-                  color: "info",
-                  label: "view project",
-                }}
-                authors={[
-                  { image: team4, name: "Peterson" },
-                  { image: team3, name: "Nick Daniel" },
-                  { image: team2, name: "Ryan Milly" },
-                  { image: team1, name: "Elena Morison" },
-                ]}
+              <TextField
+                name="address"
+                label="Adresse"
+                value={updatedUser.address}
+                onChange={handleInputChange}
+                sx={{ mt: 1, mb: 2 }}
+                required
               />
-            </Grid>
-          </Grid>
-        </MDBox>
+              <TextField
+                name="corsApp"
+                label="URL Site"
+                value={updatedUser.corsApp}
+                onChange={handleInputChange}
+                sx={{ mt: 1, mb: 2 }}
+                required
+              />
+              <TextField
+                name="appId"
+                label="App ID"
+                value={updatedUser.appId}
+                onChange={handleInputChange}
+                sx={{ mt: 1, mb: 2 }}
+                required
+              />
+              <TextField
+                name="appSecret"
+                label="App Secret"
+                value={updatedUser.appSecret}
+                onChange={handleInputChange}
+                sx={{ mt: 1, mb: 2 }}
+                required
+              />
+
+              <Button variant="contained" type="submit" sx={{ mt: 2 }} style={{ color: "#fff" }}>
+                Enregistrer
+              </Button>
+            </Box>
+          )}
+        </Box>
       </Header>
       <Footer />
     </DashboardLayout>
