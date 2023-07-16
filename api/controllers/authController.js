@@ -21,7 +21,8 @@ exports.register = async (req, res) => {
     }
 
     // Créer un nouvel utilisateur
-    const user = new User({ name, email, password, address, companyName, confirmed: false, corsApp, appId });
+    // const user = new User({ name, email, password, address, companyName, confirmed: false, corsApp, appId });
+    const user = new User({ name, email, password, address, companyName, corsApp, appId });
 
     await user.save();
 

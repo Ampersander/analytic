@@ -124,9 +124,9 @@ database.connectDB().then(() => {
 			}
 
 			return User.insertMany(admin);
+			console.log('Admin insérées avec succès');
 		})
 		.then(() => {
-			console.log('Admin insérées avec succès');
 		})
 		.catch(error => {
 			console.error('Erreur lors de la recherche ou de l\'insertion des données :', error);

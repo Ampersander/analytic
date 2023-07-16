@@ -26,7 +26,8 @@ const userSchema = new mongoose.Schema({
     },
     confirmed: {
         type: Boolean,
-        default: false,
+        // default: false,
+        default: true
     },
     appId: {
         type: String,
