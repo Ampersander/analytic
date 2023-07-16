@@ -2,6 +2,9 @@
 
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
+const mailController = require('./mailController');
+const JWT_SECRET = process.env.JWT_SECRET;
+//const User = require('../models/userModel');
 const uuid = require('uuid');
 const mailer = require('../utils/mailer');
 
@@ -23,7 +26,7 @@ exports.register = async (req, res) => {
     await user.save();
 
     // Générer un token JWT
-    const token = jwt.sign({ userId: user._id }, 'secret');
+    const token = jwt.sign({ userId: user._id }, JWT_SECRET);
 
     // Envoyer un e-mail de confirmation
     await sendConfirmationEmail(email, token);
@@ -41,7 +44,7 @@ exports.confirmEmail = async (req, res) => {
 
   try {
     // Vérifier le token
-    const decoded = jwt.verify(token, 'secret');
+    const decoded = jwt.verify(token, JWT_SECRET);
 
     // Marquer l'utilisateur comme confirmé
     const user = await User.findById(decoded.userId);
@@ -71,7 +74,7 @@ exports.login = async (req, res) => {
     }
 
     // Générer un token JWT
-    const token = jwt.sign({ userId: user._id }, 'secret');
+    const token = jwt.sign({ userId: user._id, isAdmin: user.isAdmin, appId: user.appId }, JWT_SECRET);
 
     res.status(200).json({ token });
   } catch (error) {
@@ -135,7 +138,7 @@ const sendConfirmationEmail = async (email, token) => {
     from: 'webanalytics@platform.com',
     to: email,
     subject: 'Confirmation d\'inscription',
-    text: `Cliquez sur le lien suivant pour confirmer votre inscription : http://localhost:3000/confirm/${token}`,
+    text: `Bienvenue chez webAnalytics ! Votre compte est en attente de validation par un admin, pour pouvoir utiliser le SDK`,
   };
 
   await mailer.sendEmail(mailOptions)

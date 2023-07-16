@@ -17,7 +17,7 @@ class WebAnalyticsSDK {
     constructor(config) {
         // Configuration par défaut
         this.defaultConfig = {
-            apiEndpoint: config.apiEndpoint || "http://localhost:3000",
+            apiEndpoint: config.apiEndpoint || "http://localhost:8000",
             apiId: config.APP_ID || "",
             apiSecret: config.apiSecret || "",
             // Autres options de configuration par défaut

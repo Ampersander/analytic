@@ -13,7 +13,7 @@ router.post('/register', authController.register);
 // router.get('/confirm/:token', userController.confirmEmail);
 
 // TODO Route pour la connexion
-// router.post('/login', userController.login);
+router.post('/login', authController.login);
 
 // TODO Route pour la demande de réinitialisation de mot de passe
 // router.post('/forgot-password', userController.forgotPassword);

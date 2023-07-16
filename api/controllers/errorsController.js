@@ -46,6 +46,9 @@ exports.createError = async (req, res) => {
 // Méthode pour récupérer toutes les erreurs
 exports.getAllErrors = async (req, res) => {
     try {
+        if (!req.user.isAdmin) {
+            return res.status(403).json({ message: 'Accès interdit' });
+        }
         const errors = await Error.find();
         res.json(errors);
     } catch (error) {
@@ -60,6 +63,12 @@ exports.getErrorById = async (req, res) => {
         const { id } = req.params;
 
         const error = await Error.findById(id);
+
+        if (!req.user.isAdmin) {
+            if (req.user.appId !== error.appId) {
+                return res.status(403).json({ message: 'Accès interdit' });
+            }
+        }
 
         if (!error) {
             return res.status(404).json({ error: 'Erreur non trouvée.' });
@@ -77,7 +86,16 @@ exports.deleteError = async (req, res) => {
     try {
         const { id } = req.params;
 
+        const error = await Error.findById(id);
+
+        if (!req.user.isAdmin) {
+            if (req.user.appId !== error.appId) {
+                return res.status(403).json({ message: 'Accès interdit' });
+            }
+        }
+
         const deletedError = await Error.findByIdAndDelete(id);
+
 
         if (!deletedError) {
             return res.status(404).json({ error: 'Erreur non trouvée.' });
@@ -96,6 +114,18 @@ exports.updateError = async (req, res) => {
         const { id } = req.params;
         const { message, source, lineno, colno, error, timestamp, visitorId, appId } = req.body;
 
+        if (!req.user.isAdmin) {
+            if (req.user.appId !== appId) {
+                return res.status(403).json({ message: 'Accès interdit' });
+            }
+        }
+
+        const user = await User.find({ appId: appId });
+
+        if (!user) {
+            return res.status(404).json({ error: 'AppId non trouvé.' });
+        }
+
         const updatedError = await Error.findByIdAndUpdate(id, {
             appId,
             visitorId,
@@ -107,14 +137,9 @@ exports.updateError = async (req, res) => {
             timestamp
         }, { new: true });
 
+
         if (!updatedError) {
             return res.status(404).json({ error: 'Erreur non trouvée.' });
-        }
-
-        const user = await User.find({ appId: appId });
-
-        if (!user) {
-            return res.status(404).json({ error: 'AppId non trouvé.' });
         }
 
         //check if visitorId exist in Visitor collection
@@ -137,7 +162,7 @@ exports.getAllErrorsByVisitorId = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const errors = await Error.find({ visitorId: id });
+        const errors = await Error.find({ visitorId: id, appId: req.user.appId });
 
         if (!errors) {
             return res.status(404).json({ error: 'Erreur non trouvée.' });
@@ -155,6 +180,12 @@ exports.getAllErrorsByVisitorId = async (req, res) => {
 exports.getAllErrorsByAppId = async (req, res) => {
     try {
         const { appId } = req.params;
+
+        if (!req.user.isAdmin) {
+            if (req.user.appId !== appId) {
+                return res.status(403).json({ message: 'Accès interdit' });
+            }
+        }
 
         const errors = await Error.find({ appId: appId });
 

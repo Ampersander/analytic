@@ -42,6 +42,9 @@ exports.createEvent = async (req, res) => {
 // Méthode pour récupérer tous les événements
 exports.getAllEvents = async (req, res) => {
     try {
+        if (!req.user.isAdmin) {
+            return res.status(403).json({ message: 'Accès interdit' });
+        }
         const events = await Event.find();
         res.json(events);
     } catch (error) {
@@ -56,6 +59,12 @@ exports.getEventById = async (req, res) => {
         const { id } = req.params;
 
         const event = await Event.findById(id);
+
+        if (!req.user.isAdmin) {
+            if (req.user.appId !== event.appId) {
+                return res.status(403).json({ message: 'Accès interdit' });
+            }
+        }
 
         if (!event) {
             return res.status(404).json({ error: 'Événement non trouvé.' });
@@ -72,6 +81,14 @@ exports.getEventById = async (req, res) => {
 exports.deleteEvent = async (req, res) => {
     try {
         const { id } = req.params;
+
+        const event = await Event.findById(id);
+
+        if (!req.user.isAdmin) {
+            if (req.user.appId !== event.appId) {
+                return res.status(403).json({ message: 'Accès interdit' });
+            }
+        }
 
         const deletedEvent = await Event.findByIdAndDelete(id);
 
@@ -90,7 +107,13 @@ exports.deleteEvent = async (req, res) => {
 exports.updateEvent = async (req, res) => {
     try {
         const { id } = req.params;
-        const { eventType, tag, visitorId, eventTime, eventData } = req.body;
+        const { eventType, tag, visitorId, eventTime, eventData, appId } = req.body;
+
+        if (!req.user.isAdmin) {
+            if (req.user.appId !== appId) {
+                return res.status(403).json({ message: 'Accès interdit' });
+            }
+        }
 
         const user = await User.find({ appId: appId });
 
@@ -131,7 +154,7 @@ exports.updateEvent = async (req, res) => {
 exports.getAllEventsByVisitorId = async (req, res) => {
     try {
         const { visitorId } = req.params;
-        const events = await Event.find({ visitorId: visitorId });
+        const events = await Event.find({ visitorId: visitorId, appId: req.user.appId });
         res.json(events);
     } catch (error) {
         console.error("Erreur lors de la récupération des événements :", error);
@@ -144,6 +167,13 @@ exports.getAllEventsByVisitorId = async (req, res) => {
 exports.getAllEventsByAppId = async (req, res) => {
     try {
         const { appId } = req.params;
+
+        if (!req.user.isAdmin) {
+            if (req.user.appId !== appId) {
+                return res.status(403).json({ message: 'Accès interdit' });
+            }
+        }
+
         const events = await Event.find({ appId: appId });
         res.json(events);
     } catch (error) {

@@ -4,6 +4,9 @@ const User = require('../models/userModel');
 // Récupérer tous les visiteurs
 exports.getAllVisitors = async (req, res) => {
     try {
+        if (!req.user.isAdmin) {
+            return res.status(403).json({ message: 'Accès interdit' });
+        }
         const visitors = await Visitor.find();
         res.json(visitors);
     } catch (error) {
@@ -15,6 +18,13 @@ exports.getAllVisitors = async (req, res) => {
 exports.getVisitorById = async (req, res) => {
     try {
         const visitor = await Visitor.findById(req.params.id);
+
+        if (!req.user.isAdmin) {
+            if (req.user.appId !== visitor.appId) {
+                return res.status(403).json({ message: 'Accès interdit' });
+            }
+        }
+
         if (!visitor) {
             return res.status(404).json({ message: 'Visiteur non trouvé.' });
         }
@@ -45,6 +55,13 @@ exports.createVisitor = async (req, res) => {
 exports.updateVisitor = async (req, res) => {
     try {
         const { appId } = req.body;
+
+        if (!req.user.isAdmin) {
+            if (req.user.appId !== appId) {
+                return res.status(403).json({ message: 'Accès interdit' });
+            }
+        }
+
         const user = await User.find({ appId: appId });
 
         if (!user) {
@@ -63,8 +80,16 @@ exports.updateVisitor = async (req, res) => {
 // Supprimer un visiteur
 exports.deleteVisitor = async (req, res) => {
     try {
-        const visitor = await Visitor.findByIdAndDelete(req.params.id);
-        if (!visitor) {
+
+        const visitor = await Visitor.findById(req.params.id);
+        if (!req.user.isAdmin) {
+            if (req.user.appId !== visitor.appId) {
+                return res.status(403).json({ message: 'Accès interdit' });
+            }
+        }
+
+        const visitorTodelete = await Visitor.findByIdAndDelete(req.params.id);
+        if (!visitorTodelete) {
             return res.status(404).json({ message: 'Visiteur non trouvé.' });
         }
         res.json({ message: 'Visiteur supprimé avec succès.' });
@@ -79,6 +104,12 @@ exports.getAllVisitorsByAppId = async (req, res) => {
     try {
         const { appId } = req.params;
 
+        if (!req.user.isAdmin) {
+            if (req.user.appId !== appId) {
+                return res.status(403).json({ message: 'Accès interdit' });
+            }
+        }
+
         const visitors = await Visitor.find({ appId: appId });
 
         if (!visitors) {
@@ -91,4 +122,3 @@ exports.getAllVisitorsByAppId = async (req, res) => {
         res.status(500).json({ error: 'Une erreur s\'est produite lors de la récupération de l\'erreur.' });
     }
 }
-    
