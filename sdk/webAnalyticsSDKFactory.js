@@ -5,9 +5,10 @@ import ua from "ua-parser-js";
 
 // Création de la Factory pour le SDK frontend
 export class WebAnalyticsSDKFactory {
-    createSDK(appId) {
+    createSDK(appId, appSecret = "") {
         return new WebAnalyticsSDK({
             APP_ID: appId,
+            APP_SECRET: appSecret,
         });
     }
 }
@@ -19,7 +20,7 @@ class WebAnalyticsSDK {
         this.defaultConfig = {
             apiEndpoint: config.apiEndpoint || "http://localhost:8000",
             apiId: config.APP_ID || "",
-            apiSecret: config.apiSecret || "",
+            apiSecret: config.APP_SECRET || "",
             // Autres options de configuration par défaut
         };
 
